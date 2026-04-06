@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a73e8">
+    <meta name="description" content="Personal finance salary envelope planner">
+    <title>Salary Envelope Planner</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; background: #f5f7fa; color: #2c3e50; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px 20px; margin-bottom: 24px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        h1 { font-size: 28px; margin-bottom: 8px; }
+        .salary-input { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .input-group { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+        input[type="number"], input[type="text"], input[type="date"] { padding: 12px; border: 2px solid #e1e8ed; border-radius: 6px; font-size: 16px; flex: 1; min-width: 200px; }
+        input:focus { outline: none; border-color: #667eea; }
+        button { padding: 12px 24px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s; }
+        button:hover { background: #5568d3; transform: translateY(-1px); }
+        button:active { transform: translateY(0); }
+        .btn-secondary { background: #48bb78; }
+        .btn-secondary:hover { background: #38a169; }
+        .btn-danger { background: #f56565; }
+        .btn-danger:hover { background: #e53e3e; }
+        .envelopes { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .envelope { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 4px solid #667eea; transition: all 0.2s; }
+        .envelope:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.1); transform: translateY(-2px); }
+        .envelope.goal { border-left-color: #48bb78; }
+        .envelope.debt { border-left-color: #f56565; }
+        .envelope.budget { border-left-color: #ed8936; }
+        .envelope.completed { opacity: 0.7; background: #f7fafc; }
+        .envelope-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; }
+        .envelope-title { font-size: 18px; font-weight: 600; }
+        .envelope-type { font-size: 12px; text-transform: uppercase; color: #718096; font-weight: 600; }
+        .envelope-amount { font-size: 24px; font-weight: 700; color: #667eea; margin: 8px 0; }
+        .envelope.goal .envelope-amount { color: #48bb78; }
+        .envelope.debt .envelope-amount { color: #f56565; }
+        .envelope.budget .envelope-amount { color: #ed8936; }
+        .progress-bar { height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin: 12px 0; }
+        .progress-fill { height: 100%; background: #667eea; transition: width 0.3s; }
+        .envelope.goal .progress-fill { background: #48bb78; }
+        .envelope.debt .progress-fill { background: #f56565; }
+        .envelope.budget .progress-fill { background: #ed8936; }
+        .envelope-info { font-size: 14px; color: #718096; margin-top: 8px; }
+        .envelope-actions { margin-top: 12px; display: flex; gap: 8px; }
+        .envelope-actions button { font-size: 14px; padding: 8px 16px; }
+        .summary { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px; }
+        .summary-card { padding: 16px; background: #f7fafc; border-radius: 6px; }
+        .summary-label { font-size: 14px; color: #718096; margin-bottom: 4px; }
+        .summary-value { font-size: 24px; font-weight: 700; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; padding: 32px; border-radius: 12px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        .modal-header { font-size: 24px; font-weight: 700; margin-bottom: 20px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #4a5568; }
+        .form-actions { display: flex; gap: 12px; margin-top: 24px; }
+        .form-actions button { flex: 1; }
+        .redirect-list { margin-top: 12px; }
+        .redirect-item { background: #f7fafc; padding: 12px; border-radius: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        select { padding: 12px; border: 2px solid #e1e8ed; border-radius: 6px; font-size: 16px; width: 100%; }
+        .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+        .badge.completed { background: #48bb78; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💰 Salary Envelope Planner</h1>
+            <p>Plan your monthly salary across goals, debts, and budgets</p>
+        </header>
+
+        <div class="salary-input">
+            <h2 style="margin-bottom: 12px;">Monthly Salary</h2>
+            <div class="input-group">
+                <input type="number" id="salary" placeholder="Enter monthly salary" value="10000">
+                <input type="date" id="startDate" value="">
+                <button onclick="updateSalary()">Update</button>
+            </div>
+        </div>
+
+        <div class="summary">
+            <h2>Summary</h2>
+            <div class="summary-grid">
+                <div class="summary-card">
+                    <div class="summary-label">Monthly Salary</div>
+                    <div class="summary-value" id="summarySalary">0</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">Total Allocated</div>
+                    <div class="summary-value" id="summaryAllocated">0</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">Remaining</div>
+                    <div class="summary-value" id="summaryRemaining" style="color: #48bb78;">0</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-label">Active Envelopes</div>
+                    <div class="summary-value" id="summaryActive">0</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h2>Envelopes</h2>
+            <button onclick="showAddModal()" class="btn-secondary">+ Add Envelope</button>
+        </div>
+
+        <div class="envelopes" id="envelopesList"></div>
+    </div>
+
+    <div class="modal" id="envelopeModal">
+        <div class="modal-content">
+            <div class="modal-header" id="modalTitle">Add Envelope</div>
+            <form id="envelopeForm" onsubmit="saveEnvelope(event)">
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="envName" required>
+                </div>
+                <div class="form-group">
+                    <label>Type</label>
+                    <select id="envType" required>
+                        <option value="goal">Goal</option>
+                        <option value="debt">Debt</option>
+                        <option value="budget">Budget</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Target Amount</label>
+                    <input type="number" id="envTarget" required min="0">
+                </div>
+                <div class="form-group">
+                    <label>Monthly Allocation</label>
+                    <input type="number" id="envMonthly" required min="0">
+                </div>
+                <div class="form-group" id="redirectGroup" style="display:none;">
+                    <label>When completed, redirect to:</label>
+                    <select id="redirectTo">
+                        <option value="">None</option>
+                    </select>
+                    <button type="button" onclick="addRedirect()" style="margin-top:8px; width:100%;">+ Add Redirect</button>
+                    <div class="redirect-list" id="redirectList"></div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="closeModal()" class="btn-danger">Cancel</button>
+                    <button type="submit" class="btn-secondary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let data = {
+            salary: 10000,
+            startDate: new Date().toISOString().split('T')[0],
+            envelopes: []
+        };
+        let editingId = null;
+
+        function loadData() {
+            const stored = localStorage.getItem('salaryEnvelopePlan');
+            if (stored) {
+                data = JSON.parse(stored);
+            }
+            document.getElementById('salary').value = data.salary;
+            document.getElementById('startDate').value = data.startDate;
+            render();
+        }
+
+        function saveData() {
+            localStorage.setItem('salaryEnvelopePlan', JSON.stringify(data));
+            render();
+        }
+
+        function updateSalary() {
+            data.salary = parseFloat(document.getElementById('salary').value) || 0;
+            data.startDate = document.getElementById('startDate').value;
+            saveData();
+        }
+
+        function showAddModal() {
+            editingId = null;
+            document.getElementById('modalTitle').textContent = 'Add Envelope';
+            document.getElementById('envelopeForm').reset();
+            document.getElementById('redirectGroup').style.display = 'block';
+            updateRedirectOptions();
+            document.getElementById('envelopeModal').classList.add('active');
+        }
+
+        function showEditModal(id) {
+            editingId = id;
+            const env = data.envelopes.find(e => e.id === id);
+            document.getElementById('modalTitle').textContent = 'Edit Envelope';
+            document.getElementById('envName').value = env.name;
+            document.getElementById('envType').value = env.type;
+            document.getElementById('envTarget').value = env.target;
+            document.getElementById('envMonthly').value = env.monthly;
+            document.getElementById('redirectGroup').style.display = 'block';
+            updateRedirectOptions();
+            document.getElementById('envelopeModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('envelopeModal').classList.remove('active');
+        }
+
+        function saveEnvelope(e) {
+            e.preventDefault();
+            const envelope = {
+                id: editingId || Date.now(),
+                name: document.getElementById('envName').value,
+                type: document.getElementById('envType').value,
+                target: parseFloat(document.getElementById('envTarget').value),
+                monthly: parseFloat(document.getElementById('envMonthly').value),
+                current: 0,
+                completed: false,
+                redirects: []
+            };
+
+            if (editingId) {
+                const index = data.envelopes.findIndex(e => e.id === editingId);
+                envelope.current = data.envelopes[index].current;
+                envelope.completed = data.envelopes[index].completed;
+                envelope.redirects = data.envelopes[index].redirects || [];
+                data.envelopes[index] = envelope;
+            } else {
+                data.envelopes.push(envelope);
+            }
+
+            saveData();
+            closeModal();
+        }
+
+        function deleteEnvelope(id) {
+            if (confirm('Delete this envelope?')) {
+                data.envelopes = data.envelopes.filter(e => e.id !== id);
+                saveData();
+            }
+        }
+
+        function addRedirect() {
+            const targetId = document.getElementById('redirectTo').value;
+            if (!targetId) return;
+
+            const currentId = editingId;
+            const targetEnv = data.envelopes.find(e => e.id == targetId);
+            if (!targetEnv) return;
+
+            if (currentId) {
+                const env = data.envelopes.find(e => e.id === currentId);
+                if (!env.redirects) env.redirects = [];
+                if (!env.redirects.some(r => r.targetId == targetId)) {
+                    env.redirects.push({ targetId: parseInt(targetId), percentage: 100 });
+                    saveData();
+                }
+            }
+        }
+
+        function updateRedirectOptions() {
+            const select = document.getElementById('redirectTo');
+            select.innerHTML = '<option value="">Select envelope...</option>';
+            data.envelopes.forEach(env => {
+                if (!editingId || env.id !== editingId) {
+                    select.innerHTML += `<option value="${env.id}">${env.name}</option>`;
+                }
+            });
+        }
+
+        function calculate() {
+            const startDate = new Date(data.startDate);
+            const currentDate = new Date();
+
+            data.envelopes.forEach(env => {
+                if (env.type === 'budget') {
+                    env.current = env.monthly;
+                    env.remaining = 0;
+                } else {
+                    if (!env.completed && env.current < env.target) {
+                        const monthsElapsed = Math.max(0, Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24 * 30)));
+                        env.current = Math.min(env.target, env.monthly * monthsElapsed);
+
+                        if (env.current >= env.target) {
+                            env.completed = true;
+                        }
+                    }
+
+                    if (!env.completed) {
+                        env.remaining = env.target - env.current;
+                        env.monthsLeft = Math.ceil(env.remaining / env.monthly);
+                        env.completionDate = new Date(currentDate);
+                        env.completionDate.setMonth(env.completionDate.getMonth() + env.monthsLeft);
+                    }
+                }
+            });
+        }
+
+        function render() {
+            calculate();
+
+            const list = document.getElementById('envelopesList');
+            list.innerHTML = '';
+
+            let totalAllocated = 0;
+            let activeCount = 0;
+
+            data.envelopes.forEach(env => {
+                if (!env.completed || env.type === 'budget') {
+                    totalAllocated += env.monthly;
+                    activeCount++;
+                }
+
+                const progress = env.type === 'budget' ? 100 : Math.min(100, (env.current / env.target) * 100);
+
+                const card = document.createElement('div');
+                card.className = `envelope ${env.type} ${env.completed ? 'completed' : ''}`;
+                card.innerHTML = `
+                    <div class="envelope-header">
+                        <div>
+                            <div class="envelope-type">${env.type}</div>
+                            <div class="envelope-title">${env.name}</div>
+                        </div>
+                        ${env.completed ? '<span class="badge completed">✓ Completed</span>' : ''}
+                    </div>
+                    <div class="envelope-amount">${env.current.toLocaleString()} / ${env.target.toLocaleString()}</div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: ${progress}%"></div></div>
+                    <div class="envelope-info">
+                        ${env.type === 'budget' 
+                            ? `Monthly: ${env.monthly.toLocaleString()}`
+                            : env.completed 
+                                ? 'Goal achieved!'
+                                : `${env.monthsLeft} months left • ${env.monthly.toLocaleString()}/mo • Est: ${env.completionDate.toLocaleDateString('en-US', {month: 'short', year: 'numeric'})}`
+                        }
+                    </div>
+                    <div class="envelope-actions">
+                        <button onclick="showEditModal(${env.id})">Edit</button>
+                        <button onclick="deleteEnvelope(${env.id})" class="btn-danger">Delete</button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+
+            document.getElementById('summarySalary').textContent = data.salary.toLocaleString();
+            document.getElementById('summaryAllocated').textContent = totalAllocated.toLocaleString();
+            document.getElementById('summaryRemaining').textContent = (data.salary - totalAllocated).toLocaleString();
+            document.getElementById('summaryActive').textContent = activeCount;
+
+            const remaining = data.salary - totalAllocated;
+            document.getElementById('summaryRemaining').style.color = remaining >= 0 ? '#48bb78' : '#f56565';
+        }
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(() => {});
+        }
+
+        window.addEventListener('load', loadData);
+    </script>
+</body>
+</html>
