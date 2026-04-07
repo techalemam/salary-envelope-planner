@@ -7,148 +7,217 @@
     <title>Salary Envelope Planner</title>
     <link rel="manifest" href="manifest.json">
     <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        [dir="rtl"] {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f4f8; color: #1a202c; transition: all 0.3s; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text-main); line-height: 1.5; transition: background 0.3s; overflow-x: hidden; }
         .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
         
-        /* What-If Mode Styling */
-        body.what-if-active { background: #fff5f5; }
-        .what-if-banner { display: none; background: #f56565; color: white; padding: 10px; text-align: center; font-weight: bold; position: sticky; top: 0; z-index: 2000; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        /* What-If Mode */
+        body.what-if-active { background: #fff1f2; }
+        .what-if-banner { display: none; background: var(--danger); color: white; padding: 12px; text-align: center; font-weight: 700; position: sticky; top: 0; z-index: 2000; box-shadow: var(--shadow); }
         body.what-if-active .what-if-banner { display: block; }
         
-        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 12px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .btn { padding: 8px 16px; border-radius: 6px; cursor: pointer; border: none; font-weight: 600; font-size: 14px; transition: 0.2s; text-align: center; display: inline-flex; align-items: center; justify-content: center; }
-        .btn-primary { background: #4299e1; color: white; }
-        .btn-success { background: #48bb78; color: white; }
-        .btn-danger { background: #f56565; color: white; }
-        .btn-warning { background: #ed8936; color: white; }
-        .btn-outline { background: white; border: 1px solid #e2e8f0; color: #4a5568; }
-        .btn-header { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; }
-        .btn-header:hover { background: rgba(255,255,255,0.2); }
+        header { 
+            background: linear-gradient(135deg, var(--primary) 0%, #a855f7 100%); 
+            color: white; padding: 30px; border-radius: var(--radius); 
+            margin-bottom: 30px; display: flex; justify-content: space-between; 
+            align-items: center; box-shadow: var(--shadow-lg);
+        }
+        
+        .btn { 
+            padding: 10px 20px; border-radius: 8px; cursor: pointer; border: none; 
+            font-weight: 600; font-size: 14px; transition: all 0.2s; 
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-warning { background: var(--warning); color: white; }
+        .btn-outline { background: white; border: 1px solid #e2e8f0; color: var(--text-main); }
+        .btn-outline:hover { background: #f1f5f9; }
+        .btn-header { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; backdrop-filter: blur(4px); }
+        .btn-header:hover { background: rgba(255,255,255,0.25); }
 
-        .high-level-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .summary-card { background: white; padding: 18px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 5px solid #4299e1; }
-        .summary-label { font-size: 11px; color: #718096; text-transform: uppercase; letter-spacing: 0.05em; font-weight: bold; }
-        .summary-val { font-size: 24px; font-weight: 800; margin-top: 5px; color: #2d3748; }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: var(--card-bg); padding: 20px; border-radius: var(--radius); box-shadow: var(--shadow); border-bottom: 4px solid var(--primary); transition: transform 0.2s; }
+        .stat-card:hover { transform: translateY(-3px); }
+        .stat-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
+        .stat-val { font-size: 26px; font-weight: 800; margin-top: 8px; color: var(--text-main); }
 
-        .card-box { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 25px; }
-        .table-responsive { overflow-x: auto; margin-top: 15px; }
-        table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        th { text-align: left; padding: 12px; background: #f7fafc; color: #718096; text-transform: uppercase; font-size: 11px; letter-spacing: 0.05em; }
-        td { padding: 12px; border-bottom: 1px solid #edf2f7; font-weight: 500; }
-        .total-row { background: #f8fafc; font-weight: 800; }
+        .card-box { background: var(--card-bg); padding: 25px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 30px; }
+        .table-wrap { overflow-x: auto; margin-top: 20px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        th { text-align: left; padding: 15px; background: #f8fafc; color: var(--text-muted); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        [dir="rtl"] th { text-align: right; }
+        td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-weight: 500; }
+        .tr-total { background: #f8fafc; font-weight: 800; }
 
-        .type-tabs { display: flex; gap: 15px; margin-bottom: 25px; border-bottom: 2px solid #e2e8f0; padding-bottom: 1px; }
-        .tab-btn { padding: 12px 25px; border: none; background: none; cursor: pointer; font-weight: 700; color: #718096; font-size: 16px; position: relative; transition: 0.2s; }
-        .tab-btn:hover { color: #4a5568; }
-        .tab-btn.active { color: #667eea; }
-        .tab-btn.active::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 3px; background: #667eea; border-radius: 3px 3px 0 0; }
-        .section { display: none; }
-        .section.active { display: block; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 30px; padding-bottom: 2px; border-bottom: 2px solid #e2e8f0; }
+        .tab { 
+            padding: 12px 24px; border: none; background: none; cursor: pointer; 
+            font-weight: 700; color: var(--text-muted); font-size: 16px; 
+            position: relative; transition: color 0.2s;
+        }
+        .tab.active { color: var(--primary); }
+        .tab.active::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 100%; height: 3px; background: var(--primary); border-radius: 3px; }
+        .pane { display: none; animation: fadeIn 0.3s ease; }
+        .pane.active { display: block; }
 
-        .category-block { margin-bottom: 35px; }
-        .category-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; padding: 12px 20px; background: #edf2f7; border-radius: 8px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .envelopes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 20px; }
-        .envelope-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); position: relative; border-left: 6px solid #cbd5e0; transition: transform 0.2s; }
-        .envelope-card:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.08); }
-        .envelope-card.goal { border-left-color: #48bb78; }
-        .envelope-card.debt { border-left-color: #f56565; }
-        .envelope-card.budget { border-left-color: #ed8936; }
+        .cat-block { margin-bottom: 40px; }
+        .cat-head { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 20px; padding: 15px 25px; background: #f1f5f9; border-radius: 10px; 
+        }
+        .env-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; }
+        .env-card { 
+            background: var(--card-bg); border-radius: var(--radius); padding: 25px; 
+            box-shadow: var(--shadow); position: relative; border-left: 6px solid #cbd5e0; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+        [dir="rtl"] .env-card { border-left: none; border-right: 6px solid #cbd5e0; }
+        .env-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+        .env-card.goal { border-color: var(--success); }
+        .env-card.debt { border-color: var(--danger); }
+        .env-card.budget { border-color: var(--warning); }
 
-        .priority-controls { display: flex; flex-direction: column; gap: 4px; position: absolute; right: 10px; top: 15px; }
-        .prio-btn { width: 28px; height: 28px; background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #a0aec0; }
-        .prio-btn:hover { background: #edf2f7; color: #4a5568; }
+        .env-prio { display: flex; flex-direction: column; gap: 5px; position: absolute; right: 15px; top: 20px; }
+        [dir="rtl"] .env-prio { right: auto; left: 15px; }
+        .prio-btn { 
+            width: 32px; height: 32px; background: #f1f5f9; border: 1px solid #e2e8f0; 
+            border-radius: 6px; cursor: pointer; display: flex; align-items: center; 
+            justify-content: center; font-size: 14px; color: var(--text-muted);
+        }
+        .prio-btn:hover { background: #e2e8f0; color: var(--text-main); }
 
-        .quick-update-box { margin-top: 15px; padding-top: 15px; border-top: 1px solid #edf2f7; display: flex; gap: 10px; align-items: center; }
-        .small-input { width: 100px; padding: 6px 10px; border: 1px solid #e2e8f0; border-radius: 4px; font-size: 13px; font-weight: 700; }
+        .update-bar { 
+            margin-top: 20px; padding-top: 20px; border-top: 1px solid #f1f5f9; 
+            display: flex; gap: 12px; align-items: center; 
+        }
+        .inp-sm { width: 110px; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 14px; font-weight: 700; }
 
-        .timeline-box { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .gantt-row { display: grid; grid-template-columns: 200px 1fr; border-bottom: 1px solid #edf2f7; align-items: center; min-height: 50px; }
-        .gantt-name { font-weight: 700; font-size: 14px; color: #2d3748; }
-        .gantt-track { height: 32px; background: #f7fafc; position: relative; border-radius: 16px; overflow: hidden; margin: 8px 0; }
-        .gantt-bar { height: 100%; position: absolute; border-radius: 16px; display: flex; align-items: center; padding: 0 15px; color: white; font-size: 12px; font-weight: 800; white-space: nowrap; }
-        .month-ticks { display: flex; justify-content: space-between; font-size: 12px; font-weight: 800; color: #a0aec0; padding-left: 200px; margin-bottom: 10px; }
+        .gantt-chart { background: white; padding: 35px; border-radius: var(--radius); box-shadow: var(--shadow); }
+        .gantt-item { display: grid; grid-template-columns: 220px 1fr; border-bottom: 1px solid #f1f5f9; align-items: center; min-height: 55px; }
+        .gantt-lbl { font-weight: 700; color: var(--text-main); font-size: 14px; }
+        .gantt-bar-wrap { height: 36px; background: #f8fafc; position: relative; border-radius: 18px; overflow: hidden; margin: 10px 0; }
+        .gantt-bar { 
+            height: 100%; position: absolute; border-radius: 18px; 
+            display: flex; align-items: center; padding: 0 18px; color: white; 
+            font-size: 12px; font-weight: 800; transition: width 0.5s ease; 
+        }
+        .ticks { display: flex; justify-content: space-between; font-size: 12px; font-weight: 800; color: #94a3b8; padding-left: 220px; margin-bottom: 15px; }
+        [dir="rtl"] .ticks { padding-left: 0; padding-right: 220px; flex-direction: row-reverse; }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 3000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .modal { 
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(15, 23, 42, 0.7); z-index: 3000; align-items: center; 
+            justify-content: center; backdrop-filter: blur(8px); padding: 20px;
+        }
         .modal.active { display: flex; }
-        .modal-inner { background: white; padding: 35px; border-radius: 16px; width: 95%; max-width: 550px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        .modal-body { background: white; padding: 40px; border-radius: 20px; width: 100%; max-width: 550px; box-shadow: var(--shadow-lg); }
 
-        .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
-        .badge-goal { background: #c6f6d5; color: #22543d; }
-        .badge-debt { background: #fed7d7; color: #822727; }
-        .badge-budget { background: #feebc8; color: #744210; }
-        .input-box { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 15px; outline: none; transition: 0.2s; font-weight: 500; }
-        .input-box:focus { border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
+        .badge-goal { background: #d1fae5; color: #065f46; }
+        .badge-debt { background: #fee2e2; color: #991b1b; }
+        .badge-budget { background: #fef3c7; color: #92400e; }
+        
+        .field { width: 100%; padding: 14px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 16px; outline: none; transition: all 0.2s; }
+        .field:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15); }
+
+        .rtl { direction: rtl; }
+        .lang-toggle { position: relative; }
     </style>
 </head>
 <body id="bodyRoot">
-    <div class="what-if-banner">⚠️ WHAT-IF ANALYSIS ACTIVE - Changes are not saved to your main plan</div>
+    <div class="what-if-banner" id="tr-sandbox-active">⚠️ Sandbox mode active - changes not saved</div>
 
     <div class="container">
         <header>
             <div>
-                <h1 id="appTitle">💰 Salary Planner</h1>
-                <p id="modeStatus" style="font-weight: 600; opacity: 0.9;">Real-Time Financial Plan</p>
+                <h1 id="tr-app-title">💰 Salary Planner</h1>
+                <p id="modeStatus" style="font-weight: 600; opacity: 0.85;">Real-Time Financial Plan</p>
             </div>
-            <div style="display: flex; gap: 15px;">
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <button class="btn btn-header" onclick="toggleLang()" id="langBtn">العربية</button>
                 <button class="btn btn-warning" id="whatIfToggle" onclick="toggleWhatIf()">Activate What-If</button>
-                <button class="btn btn-header" onclick="exportData()">Export</button>
-                <button class="btn btn-header" onclick="document.getElementById('fileInput').click()">Import</button>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-header" onclick="exportData()" id="tr-export">Export</button>
+                    <button class="btn btn-header" onclick="document.getElementById('fileInput').click()" id="tr-import">Import</button>
+                </div>
                 <input type="file" id="fileInput" style="display:none" onchange="importData(event)">
             </div>
         </header>
 
-        <div class="high-level-summary" id="highLevelSummary"></div>
+        <div class="summary-grid" id="highLevelSummary"></div>
 
         <div class="card-box">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h2 style="font-size: 18px;">Detailed Summary</h2>
-                <button class="btn btn-outline" style="font-size: 12px;" onclick="showTab('config')">⚙️ Config</button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 id="tr-summary-title" style="font-size: 18px;">Detailed Summary</h2>
+                <button class="btn btn-outline" style="font-size: 12px;" onclick="showTab('config')">⚙️ <span id="tr-config-btn">Config</span></button>
             </div>
-            <div class="table-responsive" id="summaryTableContainer"></div>
+            <div class="table-wrap" id="summaryTableContainer"></div>
         </div>
 
-        <div class="type-tabs">
-            <button class="tab-btn active" id="tab-plan" onclick="showTab('plan')">The Envelopes</button>
-            <button class="tab-btn" id="tab-visual" onclick="showTab('visual')">Visual Timeline</button>
-            <button class="tab-btn" id="tab-config" onclick="showTab('config')">Settings</button>
+        <div class="tabs">
+            <button class="tab active" id="tab-plan" onclick="showTab('plan')">The Envelopes</button>
+            <button class="tab" id="tab-visual" onclick="showTab('visual')">Visual Timeline</button>
+            <button class="tab" id="tab-config" onclick="showTab('config')">Settings</button>
         </div>
 
-        <!-- Plan Section -->
-        <div id="planSection" class="section active">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                <h2 style="font-size: 20px;">Monthly Allocation Blocks</h2>
-                <button class="btn btn-success" onclick="openAddModal()">+ Add New Envelope</button>
+        <div id="planSection" class="pane active">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h2 id="tr-plan-title" style="font-size: 20px;">Monthly Allocation Blocks</h2>
+                <button class="btn btn-success" onclick="openAddModal()">+ <span id="tr-add-btn">Add New Envelope</span></button>
             </div>
             <div id="categorySections"></div>
         </div>
 
-        <!-- Visual Timeline Section -->
-        <div id="visualSection" class="section">
-            <div class="timeline-box">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                    <div>
-                        <h2 style="font-size: 22px;">Visual Timeline</h2>
-                        <p style="font-size: 13px; color: #718096; margin-top: 4px;">Duration to reach target based on current plan</p>
-                    </div>
+        <div id="visualSection" class="pane">
+            <div class="gantt-chart">
+                <div style="margin-bottom: 30px;">
+                    <h2 id="tr-visual-title" style="font-size: 22px;">Visual Timeline</h2>
+                    <p id="tr-visual-desc" style="font-size: 13px; color: var(--text-muted); margin-top: 5px;">Time to target based on monthly allocations</p>
                 </div>
-                <div class="month-ticks" id="monthTicks"></div>
+                <div class="ticks" id="monthTicks"></div>
                 <div id="ganttChart"></div>
             </div>
         </div>
 
-        <!-- Config Section -->
-        <div id="configSection" class="section">
-            <div class="card-box" style="max-width: 600px;">
-                <h2 style="margin-bottom: 25px;">Global Settings</h2>
-                <div style="margin-bottom: 20px;">
-                    <label style="display:block; margin-bottom: 8px; font-weight: 700; color: #4a5568;">Monthly Net Salary</label>
-                    <input type="number" id="cfgSalary" class="input-box" onchange="updateGlobal()">
+        <div id="configSection" class="pane">
+            <div class="card-box" style="max-width: 650px;">
+                <h2 id="tr-config-title" style="margin-bottom: 30px;">Global Settings</h2>
+                <div style="margin-bottom: 25px;">
+                    <label id="tr-lbl-salary" style="display:block; margin-bottom: 10px; font-weight: 700; color: #475569;">Monthly Net Salary</label>
+                    <input type="number" id="cfgSalary" class="field" onchange="updateGlobal()">
                 </div>
                 <div>
-                    <label style="display:block; margin-bottom: 8px; font-weight: 700; color: #4a5568;">Plan Reference Date</label>
-                    <input type="date" id="cfgDate" class="input-box" onchange="updateGlobal()">
+                    <label id="tr-lbl-date" style="display:block; margin-bottom: 10px; font-weight: 700; color: #475569;">Plan Reference Date</label>
+                    <input type="date" id="cfgDate" class="field" onchange="updateGlobal()">
+                </div>
+                <div style="margin-top: 30px; border-top: 1px solid #f1f5f9; padding-top: 25px; display: flex; justify-content: flex-end;">
+                    <button class="btn btn-danger" onclick="resetAll()" id="tr-reset">Reset All Data</button>
                 </div>
             </div>
         </div>
@@ -156,180 +225,356 @@
 
     <!-- Modal -->
     <div class="modal" id="envModal">
-        <div class="modal-inner">
-            <h2 id="modalTitle" style="margin-bottom: 25px; color: #2d3748;">Manage Envelope</h2>
+        <div class="modal-body">
+            <h2 id="modalTitle" style="margin-bottom: 30px; color: var(--text-main);">Manage Envelope</h2>
             <form onsubmit="saveEnv(event)">
-                <div style="margin-bottom: 18px;">
-                    <label style="display:block; font-weight:700; margin-bottom:6px; color: #4a5568;">Envelope Name</label>
-                    <input type="text" id="mName" class="input-box" placeholder="e.g. Car Fund, Loan #1" required>
+                <div style="margin-bottom: 20px;">
+                    <label id="tr-lbl-name" style="display:block; font-weight:700; margin-bottom:8px; color: #475569;">Envelope Name</label>
+                    <input type="text" id="mName" class="field" required>
                 </div>
-                <div style="margin-bottom: 18px;">
-                    <label style="display:block; font-weight:700; margin-bottom:6px; color: #4a5568;">Envelope Type</label>
-                    <select id="mType" class="input-box">
-                        <option value="goal">Goal (Savings/Investment)</option>
-                        <option value="debt">Debt (Liability Payoff)</option>
-                        <option value="budget">Budget (Monthly Expenses)</option>
+                <div style="margin-bottom: 20px;">
+                    <label id="tr-lbl-type" style="display:block; font-weight:700; margin-bottom:8px; color: #475569;">Envelope Type</label>
+                    <select id="mType" class="field">
+                        <option value="goal" id="tr-opt-goal">Goal (Savings)</option>
+                        <option value="debt" id="tr-opt-debt">Debt (Payoff)</option>
+                        <option value="budget" id="tr-opt-budget">Budget (Monthly)</option>
                     </select>
                 </div>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 18px;">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                     <div>
-                        <label style="display:block; font-weight:700; margin-bottom:6px; color: #4a5568;">Target Amount</label>
-                        <input type="number" id="mTarget" class="input-box" placeholder="0">
+                        <label id="tr-lbl-target" style="display:block; font-weight:700; margin-bottom:8px; color: #475569;">Target Amount</label>
+                        <input type="number" id="mTarget" class="field">
                     </div>
                     <div>
-                        <label style="display:block; font-weight:700; margin-bottom:6px; color: #4a5568;">Current Balance</label>
-                        <input type="number" id="mCurrent" class="input-box" placeholder="0">
+                        <label id="tr-lbl-current" style="display:block; font-weight:700; margin-bottom:8px; color: #475569;">Current Balance</label>
+                        <input type="number" id="mCurrent" class="field">
                     </div>
                 </div>
-                <div style="margin-bottom: 30px;">
-                    <label style="display:block; font-weight:700; margin-bottom:6px; color: #4a5568;">Monthly Allocation Amount</label>
-                    <input type="number" id="mMonthly" class="input-box" required>
+                <div style="margin-bottom: 35px;">
+                    <label id="tr-lbl-alloc" style="display:block; font-weight:700; margin-bottom:8px; color: #475569;">Monthly Allocation</label>
+                    <input type="number" id="mMonthly" class="field" required>
                 </div>
                 <div style="display: flex; gap: 15px;">
-                    <button type="button" class="btn btn-outline" style="flex:1" onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary" style="flex:1">Save Changes</button>
+                    <button type="button" class="btn btn-outline" style="flex:1" onclick="closeModal()" id="tr-cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="flex:1" id="tr-save">Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
-        let realData = { salary: 17000, startDate: new Date().toISOString().split('T')[0], envelopes: [] };
+        const i18n = {
+            en: {
+                sandbox_active: "⚠️ Sandbox mode active - changes not saved",
+                app_title: "💰 Salary Planner",
+                real_time_plan: "Real-Time Financial Plan",
+                sandbox_mode: "Sandbox / What-If Mode (Experimental)",
+                act_sandbox: "Activate What-If",
+                exit_sandbox: "Exit Sandbox",
+                export: "Export",
+                import: "Import",
+                lbl_salary: "Monthly Salary",
+                lbl_debt_pay: "Total Debt Payoff",
+                lbl_goal_sav: "Total Goal Savings",
+                lbl_unallocated: "Unallocated Amount",
+                lbl_progress: "Overall Progress",
+                summary_title: "Detailed Summary",
+                config_btn: "Config",
+                col_name: "Envelope Name",
+                col_type: "Type",
+                col_target: "Target",
+                col_current: "Current",
+                col_alloc: "Allocation",
+                col_rem: "Remaining",
+                col_months: "Months",
+                tab_env: "The Envelopes",
+                tab_visual: "Visual Timeline",
+                tab_settings: "Settings",
+                plan_title: "Monthly Allocation Blocks",
+                add_btn: "Add New Envelope",
+                cat_budget: "Budget Envelopes",
+                cat_debt: "Debt Envelopes",
+                cat_goal: "Goal Envelopes",
+                lbl_total_monthly: "Total Monthly",
+                lbl_rem_amt: "Remaining Amount",
+                lbl_mon_ded: "Monthly Ded",
+                lbl_permanent: "Permanent",
+                lbl_mon_left: "Months left",
+                quick_dep: "Quick Deposit",
+                btn_update: "Update",
+                btn_edit: "Edit",
+                cfg_title: "Global Settings",
+                cfg_salary: "Monthly Net Salary",
+                cfg_date: "Plan Reference Date",
+                btn_reset: "Reset All Data",
+                modal_add: "Add New Envelope",
+                modal_update: "Update Envelope",
+                lbl_name: "Envelope Name",
+                lbl_type: "Envelope Type",
+                opt_goal: "Goal (Savings)",
+                opt_debt: "Debt (Payoff)",
+                opt_budget: "Budget (Monthly)",
+                lbl_target: "Target Amount",
+                lbl_current: "Current Balance",
+                lbl_mon_alloc: "Monthly Allocation",
+                btn_cancel: "Cancel",
+                btn_save: "Save Changes",
+                confirm_del: "Are you sure you want to delete this envelope?",
+                confirm_reset: "WARNING: This will delete ALL your data and plan. Proceed?"
+            },
+            ar: {
+                sandbox_active: "⚠️ وضع التجربة نشط - التغييرات لن تحفظ",
+                app_title: "💰 مخطط الراتب",
+                real_time_plan: "الخطة المالية الفعلية",
+                sandbox_mode: "وضع التجربة (What-If)",
+                act_sandbox: "تفعيل وضع التجربة",
+                exit_sandbox: "الخروج من التجربة",
+                export: "تصدير",
+                import: "استيراد",
+                lbl_salary: "الراتب الشهري",
+                lbl_debt_pay: "سداد الديون",
+                lbl_goal_sav: "ادخار الأهداف",
+                lbl_unallocated: "المبلغ غير المخصص",
+                lbl_progress: "التقدم الإجمالي",
+                summary_title: "الملخص المفصل",
+                config_btn: "الإعدادات",
+                col_name: "اسم الظرف",
+                col_type: "النوع",
+                col_target: "الهدف",
+                col_current: "الحالي",
+                col_alloc: "التخصيص",
+                col_rem: "المتبقي",
+                col_months: "الشهور",
+                tab_env: "الأظرف",
+                tab_visual: "الجدول الزمني",
+                tab_settings: "الإعدادات",
+                plan_title: "كتل التخصيص الشهري",
+                add_btn: "إضافة ظرف جديد",
+                cat_budget: "أظرف الميزانية",
+                cat_debt: "أظرف الديون",
+                cat_goal: "أظرف الأهداف",
+                lbl_total_monthly: "الإجمالي الشهري",
+                lbl_rem_amt: "المبلغ المتبقي",
+                lbl_mon_ded: "التخصيص الشهري",
+                lbl_permanent: "دائم",
+                lbl_mon_left: "شهور متبقية",
+                quick_dep: "إيداع سريع",
+                btn_update: "تحديث",
+                btn_edit: "تعديل",
+                cfg_title: "الإعدادات العامة",
+                cfg_salary: "صافي الراتب الشهري",
+                cfg_date: "تاريخ مرجع الخطة",
+                btn_reset: "إعادة تعيين كافة البيانات",
+                modal_add: "إضافة ظرف جديد",
+                modal_update: "تحديث الظرف",
+                lbl_name: "اسم الظرف",
+                lbl_type: "نوع الظرف",
+                opt_goal: "هدف (ادخار)",
+                opt_debt: "دين (سداد)",
+                opt_budget: "ميزانية (شهري)",
+                lbl_target: "المبلغ المستهدف",
+                lbl_current: "الرصيد الحالي",
+                lbl_mon_alloc: "التخصيص الشهري",
+                btn_cancel: "إلغاء",
+                btn_save: "حفظ التغييرات",
+                confirm_del: "هل أنت متأكد من حذف هذا الظرف؟",
+                confirm_reset: "تحذير: هذا سيؤدي لحذف جميع البيانات والخطة. هل تريد الاستمرار؟"
+            }
+        };
+
+        let lang = localStorage.getItem('salary_lang') || 'en';
+        let realData = { salary: 0, startDate: new Date().toISOString().split('T')[0], envelopes: [] };
         let sandboxData = null;
         let isWhatIf = false;
         let activeTab = 'plan';
         let editId = null;
 
+        function toggleLang() {
+            lang = lang === 'en' ? 'ar' : 'en';
+            localStorage.setItem('salary_lang', lang);
+            applyLang();
+            render();
+        }
+
+        function applyLang() {
+            const t = i18n[lang];
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+            document.body.classList.toggle('rtl', lang === 'ar');
+            document.getElementById('langBtn').textContent = lang === 'en' ? 'العربية' : 'English';
+            
+            // Map IDs to translations
+            const mapping = {
+                'tr-sandbox-active': t.sandbox_active,
+                'tr-app-title': t.app_title,
+                'tr-export': t.export,
+                'tr-import': t.import,
+                'tr-summary-title': t.summary_title,
+                'tr-config-btn': t.config_btn,
+                'tab-plan': t.tab_env,
+                'tab-visual': t.tab_visual,
+                'tab-config': t.tab_settings,
+                'tr-plan-title': t.plan_title,
+                'tr-add-btn': t.add_btn,
+                'tr-visual-title': t.tab_visual,
+                'tr-visual-desc': t.tr_visual_desc || t.tab_visual, // Fallback
+                'tr-config-title': t.cfg_title,
+                'tr-lbl-salary': t.cfg_salary,
+                'tr-lbl-date': t.cfg_date,
+                'tr-reset': t.btn_reset,
+                'tr-lbl-name': t.lbl_name,
+                'tr-lbl-type': t.lbl_type,
+                'tr-opt-goal': t.opt_goal,
+                'tr-opt-debt': t.opt_debt,
+                'tr-opt-budget': t.opt_budget,
+                'tr-lbl-target': t.lbl_target,
+                'tr-lbl-current': t.lbl_current,
+                'tr-lbl-alloc': t.lbl_mon_alloc,
+                'tr-cancel': t.btn_cancel,
+                'tr-save': t.btn_save
+            };
+
+            for (const [id, val] of Object.entries(mapping)) {
+                const el = document.getElementById(id);
+                if (el) el.textContent = val;
+            }
+            
+            document.getElementById('whatIfToggle').textContent = isWhatIf ? t.exit_sandbox : t.act_sandbox;
+            document.getElementById('modeStatus').textContent = isWhatIf ? t.sandbox_mode : t.real_time_plan;
+        }
+
         function load() {
-            const saved = localStorage.getItem('salary_planner_v5');
+            const saved = localStorage.getItem('salary_planner_v6');
             if (saved) realData = JSON.parse(saved);
+            applyLang();
             render();
         }
 
         function toggleWhatIf() {
             isWhatIf = !isWhatIf;
             const body = document.getElementById('bodyRoot');
-            const btn = document.getElementById('whatIfToggle');
-            const status = document.getElementById('modeStatus');
+            const t = i18n[lang];
             
             if (isWhatIf) {
                 sandboxData = JSON.parse(JSON.stringify(realData));
                 body.classList.add('what-if-active');
-                btn.textContent = 'Exit Sandbox';
-                status.textContent = 'Sandbox / What-If Mode (Changes not saved)';
             } else {
                 body.classList.remove('what-if-active');
-                btn.textContent = 'Activate What-If';
-                status.textContent = 'Real-Time Financial Plan';
                 sandboxData = null;
             }
+            applyLang();
             render();
         }
 
         function showTab(t) {
             activeTab = t;
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
             document.getElementById('tab-' + t).classList.add('active');
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.pane').forEach(s => s.classList.remove('active'));
             document.getElementById(t + 'Section').classList.add('active');
             if(t === 'visual') renderTimeline();
         }
 
         function render() {
             const d = isWhatIf ? sandboxData : realData;
+            const t = i18n[lang];
             document.getElementById('cfgSalary').value = d.salary;
             document.getElementById('cfgDate').value = d.startDate;
             
-            let totals = { budget: 0, debtAlloc: 0, goalAlloc: 0, current: 0, target: 0 };
+            let ts = { budget: 0, debt: 0, goal: 0, cur: 0, tar: 0 };
             d.envelopes.forEach(e => {
-                if(e.type === 'budget') totals.budget += e.monthly;
-                else if(e.type === 'debt') totals.debtAlloc += e.monthly;
-                else totals.goalAlloc += e.monthly;
-                totals.current += e.current;
-                totals.target += (e.type !== 'budget' ? e.target : 0);
+                if(e.type === 'budget') ts.budget += e.monthly;
+                else if(e.type === 'debt') ts.debt += e.monthly;
+                else ts.goal += e.monthly;
+                ts.cur += e.current;
+                ts.tar += (e.type !== 'budget' ? e.target : 0);
             });
 
-            const totalAlloc = totals.budget + totals.debtAlloc + totals.goalAlloc;
-            const unallocated = d.salary - totalAlloc;
-            const progress = totals.target > 0 ? (totals.current / totals.target * 100).toFixed(1) : 0;
+            const unalloc = d.salary - (ts.budget + ts.debt + ts.goal);
+            const progress = ts.tar > 0 ? (ts.cur / ts.tar * 100).toFixed(1) : 0;
 
             document.getElementById('highLevelSummary').innerHTML = `
-                <div class="summary-card">
-                    <div class="summary-label">Monthly Salary</div>
-                    <div class="summary-val">${d.salary.toLocaleString()}</div>
+                <div class="stat-card">
+                    <div class="stat-label">${t.lbl_salary}</div>
+                    <div class="stat-val">${d.salary.toLocaleString()}</div>
                 </div>
-                <div class="summary-card" style="border-left-color: #f56565;">
-                    <div class="summary-label">Total Debt Payoff</div>
-                    <div class="summary-val">${totals.debtAlloc.toLocaleString()}</div>
+                <div class="stat-card" style="border-color: var(--danger);">
+                    <div class="stat-label">${t.lbl_debt_pay}</div>
+                    <div class="stat-val">${ts.debt.toLocaleString()}</div>
                 </div>
-                <div class="summary-card" style="border-left-color: #48bb78;">
-                    <div class="summary-label">Total Goal Savings</div>
-                    <div class="summary-val">${totals.goalAlloc.toLocaleString()}</div>
+                <div class="stat-card" style="border-color: var(--success);">
+                    <div class="stat-label">${t.lbl_goal_sav}</div>
+                    <div class="stat-val">${ts.goal.toLocaleString()}</div>
                 </div>
-                <div class="summary-card" style="border-left-color: #718096;">
-                    <div class="summary-label">Unallocated Amount</div>
-                    <div class="summary-val" style="color: ${unallocated < 0 ? '#f56565' : '#2d3748'}">${unallocated.toLocaleString()}</div>
+                <div class="stat-card" style="border-color: var(--secondary);">
+                    <div class="stat-label">${t.lbl_unallocated}</div>
+                    <div class="stat-val" style="color: ${unalloc < 0 ? 'var(--danger)' : 'inherit'}">${unalloc.toLocaleString()}</div>
                 </div>
-                <div class="summary-card" style="border-left-color: #667eea;">
-                    <div class="summary-label">Overall Progress</div>
-                    <div class="summary-val">${progress}%</div>
+                <div class="stat-card" style="border-color: var(--primary);">
+                    <div class="stat-label">${t.lbl_progress}</div>
+                    <div class="stat-val">${progress}%</div>
                 </div>
             `;
 
-            renderSummaryTable(d);
+            renderTable(d);
 
-            const container = document.getElementById('categorySections');
-            container.innerHTML = '';
+            const cont = document.getElementById('categorySections');
+            cont.innerHTML = '';
             ['budget', 'debt', 'goal'].forEach(type => {
                 const envs = d.envelopes.filter(e => e.type === type);
                 if(envs.length === 0) return;
                 
-                const typeTotal = envs.reduce((acc, curr) => acc + curr.monthly, 0);
+                const typeTotal = envs.reduce((a, c) => a + c.monthly, 0);
                 const block = document.createElement('div');
-                block.className = 'category-block';
+                block.className = 'cat-block';
                 block.innerHTML = `
-                    <div class="category-header">
-                        <h3 style="text-transform: capitalize; font-size: 16px;">${type} Envelopes</h3>
-                        <span style="font-weight: 800; font-size: 14px; color: #4a5568;">Total Monthly: ${typeTotal.toLocaleString()}</span>
+                    <div class="cat-head">
+                        <h3 style="font-size: 16px;">${t['cat_' + type]}</h3>
+                        <span style="font-weight: 800; font-size: 14px; color: var(--text-muted);">${t.lbl_total_monthly}: ${typeTotal.toLocaleString()}</span>
                     </div>
-                    <div class="envelopes-grid" id="grid-${type}"></div>
+                    <div class="env-grid" id="grid-${type}"></div>
                 `;
-                container.appendChild(block);
+                cont.appendChild(block);
                 
                 const grid = document.getElementById('grid-' + type);
                 envs.forEach(e => {
-                    const remaining = Math.max(0, e.target - e.current);
-                    const months = e.monthly > 0 ? Math.ceil(remaining / e.monthly) : '∞';
+                    const rem = Math.max(0, e.target - e.current);
+                    const months = e.monthly > 0 ? Math.ceil(rem / e.monthly) : '∞';
                     const prog = e.type === 'budget' ? 100 : Math.min(100, (e.current / e.target) * 100);
                     
                     grid.innerHTML += `
-                        <div class="envelope-card ${e.type}">
-                            <div class="priority-controls">
-                                <button class="prio-btn" onclick="movePriority(${e.id}, -1)">▲</button>
-                                <button class="prio-btn" onclick="movePriority(${e.id}, 1)">▼</button>
+                        <div class="env-card ${e.type}">
+                            <div class="env-prio">
+                                <button class="prio-btn" onclick="movePrio(${e.id}, -1)">▲</button>
+                                <button class="prio-btn" onclick="movePrio(${e.id}, 1)">▼</button>
                             </div>
-                            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:15px;">
                                 <div>
-                                    <span class="badge badge-${e.type}">${e.type}</span>
-                                    <div style="font-weight:800; font-size:17px; margin-top:6px; color: #2d3748;">${e.name}</div>
+                                    <span class="badge badge-${e.type}">${t[e.type]}</span>
+                                    <div style="font-weight:800; font-size:18px; margin-top:8px; color: var(--text-main);">${e.name}</div>
                                 </div>
-                                <div style="display:flex; gap:6px;">
-                                    <button class="btn btn-outline" style="padding:5px 10px; font-size:11px;" onclick="openEditModal(${e.id})">Edit</button>
-                                    <button class="btn btn-danger" style="padding:5px 10px; font-size:11px;" onclick="deleteEnv(${e.id})">X</button>
+                                <div style="display:flex; gap:8px;">
+                                    <button class="btn btn-outline" style="padding:6px 12px; font-size:12px;" onclick="openEditModal(${e.id})">${t.btn_edit}</button>
+                                    <button class="btn btn-danger" style="padding:6px 12px; font-size:12px;" onclick="delEnv(${e.id})">✕</button>
                                 </div>
                             </div>
-                            <div style="font-size: 20px; font-weight:800; color:#2d3748">${e.current.toLocaleString()} <span style="font-size: 14px; color: #a0aec0; font-weight: 500;">/ ${e.target.toLocaleString()}</span></div>
-                            <div style="height:8px; background:#edf2f7; border-radius:4px; margin:15px 0; overflow:hidden;">
-                                <div style="width:${prog}%; height:100%; background:${e.type==='goal'?'#48bb78':e.type==='debt'?'#f56565':'#ed8936'}; border-radius:4px;"></div>
+                            <div style="font-size: 22px; font-weight:800; color:var(--text-main)">
+                                ${e.current.toLocaleString()} 
+                                <span style="font-size: 14px; color: var(--text-muted); font-weight: 500;">/ ${e.target.toLocaleString()}</span>
                             </div>
-                            <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; color:#718096;">
-                                <span>Monthly Ded: ${e.monthly.toLocaleString()}</span>
-                                <span>${e.type==='budget'?'Permanent': months + ' Months left'}</span>
+                            <div style="margin-top: 5px; font-size: 13px; font-weight: 700; color: var(--secondary);">
+                                ${t.lbl_rem_amt}: ${rem.toLocaleString()}
                             </div>
-                            <div class="quick-update-box">
-                                <span style="font-size: 12px; font-weight: 700; color: #718096;">Quick Deposit:</span>
-                                <input type="number" id="quick-${e.id}" class="small-input" value="${e.monthly}">
-                                <button class="btn btn-success" style="padding: 6px 12px; font-size: 11px;" onclick="quickUpdate(${e.id})">Update</button>
+                            <div style="height:10px; background:#f1f5f9; border-radius:5px; margin:18px 0; overflow:hidden;">
+                                <div style="width:${prog}%; height:100%; background:var(--${e.type==='goal'?'success':e.type==='debt'?'danger':'warning'}); transition: width 0.4s;"></div>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; color:var(--text-muted);">
+                                <span>${t.lbl_mon_ded}: ${e.monthly.toLocaleString()}</span>
+                                <span>${e.type==='budget' ? t.lbl_permanent : months + ' ' + t.lbl_mon_left}</span>
+                            </div>
+                            <div class="update-bar">
+                                <span style="font-size: 12px; font-weight: 700; color: var(--text-muted);">${t.quick_dep}:</span>
+                                <input type="number" id="q-${e.id}" class="inp-sm" value="${e.monthly}">
+                                <button class="btn btn-success" style="padding: 8px 15px; font-size: 12px;" onclick="quickUp(${e.id})">${t.btn_update}</button>
                             </div>
                         </div>
                     `;
@@ -338,107 +583,121 @@
             if(activeTab === 'visual') renderTimeline();
         }
 
-        function renderSummaryTable(d) {
-            let html = `<table>
-                <thead>
-                    <tr>
-                        <th>Envelope Name</th>
-                        <th>Type</th>
-                        <th>Target</th>
-                        <th>Current</th>
-                        <th>Allocation</th>
-                        <th>Remaining</th>
-                        <th>Months</th>
-                    </tr>
-                </thead>
-                <tbody>`;
+        function renderTable(d) {
+            const t = i18n[lang];
+            let h = `<table><thead><tr>
+                <th>${t.col_name}</th><th>${t.col_type}</th><th>${t.col_target}</th>
+                <th>${t.col_current}</th><th>${t.col_alloc}</th><th>${t.col_rem}</th><th>${t.col_months}</th>
+            </tr></thead><tbody>`;
             
-            let tTarget = 0, tCurrent = 0, tAlloc = 0, tRem = 0;
-            
+            let totTar = 0, totCur = 0, totAloc = 0, totRem = 0;
             d.envelopes.forEach(e => {
-                const rem = Math.max(0, e.target - e.current);
-                const months = e.monthly > 0 ? Math.ceil(rem / e.monthly) : (e.type === 'budget' ? '-' : '∞');
-                html += `<tr>
+                const r = Math.max(0, e.target - e.current);
+                const m = e.monthly > 0 ? Math.ceil(r / e.monthly) : (e.type === 'budget' ? '-' : '∞');
+                h += `<tr>
                     <td>${e.name}</td>
-                    <td><span class="badge badge-${e.type}">${e.type}</span></td>
+                    <td><span class="badge badge-${e.type}">${t[e.type]}</span></td>
                     <td>${e.target.toLocaleString()}</td>
                     <td>${e.current.toLocaleString()}</td>
                     <td>${e.monthly.toLocaleString()}</td>
-                    <td>${rem.toLocaleString()}</td>
-                    <td>${months}</td>
+                    <td>${r.toLocaleString()}</td>
+                    <td>${m}</td>
                 </tr>`;
-                tTarget += (e.type !== 'budget' ? e.target : 0);
-                tCurrent += e.current;
-                tAlloc += e.monthly;
-                tRem += rem;
+                totTar += (e.type !== 'budget' ? e.target : 0);
+                totCur += e.current;
+                totAloc += e.monthly;
+                totRem += r;
             });
 
-            html += `<tr class="total-row">
+            h += `<tr class="tr-total">
                 <td colspan="2">TOTALS</td>
-                <td>${tTarget.toLocaleString()}</td>
-                <td>${tCurrent.toLocaleString()}</td>
-                <td>${tAlloc.toLocaleString()}</td>
-                <td>${tRem.toLocaleString()}</td>
+                <td>${totTar.toLocaleString()}</td>
+                <td>${totCur.toLocaleString()}</td>
+                <td>${totAloc.toLocaleString()}</td>
+                <td>${totRem.toLocaleString()}</td>
                 <td>-</td>
             </tr></tbody></table>`;
-            
-            document.getElementById('summaryTableContainer').innerHTML = html;
+            document.getElementById('summaryTableContainer').innerHTML = h;
         }
 
         function renderTimeline() {
             const d = isWhatIf ? sandboxData : realData;
-            const chart = document.getElementById('ganttChart');
-            const ticks = document.getElementById('monthTicks');
-            chart.innerHTML = ''; ticks.innerHTML = '';
+            const t = i18n[lang];
+            const ch = document.getElementById('ganttChart');
+            const tk = document.getElementById('monthTicks');
+            ch.innerHTML = ''; tk.innerHTML = '';
             
-            const start = new Date(d.startDate);
+            const s = new Date(d.startDate);
             for(let i=0; i<12; i++) {
-                let m = new Date(start); m.setMonth(m.getMonth() + i);
-                ticks.innerHTML += `<div>${m.toLocaleDateString('en-US', {month:'short'})}</div>`;
+                let m = new Date(s); m.setMonth(m.setMonth() + i);
+                tk.innerHTML += `<div>${m.toLocaleDateString(lang === 'ar'?'ar-SA':'en-US', {month:'short'})}</div>`;
             }
 
-            const sortedEnvs = [...d.envelopes].filter(e => e.type !== 'budget');
-            sortedEnvs.forEach(e => {
-                const remaining = Math.max(0, e.target - e.current);
-                const duration = e.monthly > 0 ? Math.ceil(remaining / e.monthly) : 0;
-                const widthPercent = Math.min(100, (duration / 12) * 100);
+            d.envelopes.filter(e => e.type !== 'budget').forEach(e => {
+                const r = Math.max(0, e.target - e.current);
+                const dur = e.monthly > 0 ? Math.ceil(r / e.monthly) : 0;
+                const wp = Math.min(100, (dur / 12) * 100);
                 
                 const row = document.createElement('div');
-                row.className = 'gantt-row';
+                row.className = 'gantt-item';
                 row.innerHTML = `
-                    <div class="gantt-name">${e.name}</div>
-                    <div class="gantt-track">
-                        <div class="gantt-bar" style="width:${widthPercent}%; background:${e.type==='goal'?'#48bb78':'#f56565'};">
-                            ${duration} months
+                    <div class="gantt-lbl">${e.name}</div>
+                    <div class="gantt-bar-wrap">
+                        <div class="gantt-bar" style="width:${wp}%; background:var(--${e.type==='goal'?'success':'danger'});">
+                            ${dur} ${t.col_months}
                         </div>
                     </div>
                 `;
-                chart.appendChild(row);
+                ch.appendChild(row);
             });
         }
 
-        function quickUpdate(id) {
-            const amt = parseFloat(document.getElementById('quick-' + id).value) || 0;
+        function quickUp(id) {
+            const val = parseFloat(document.getElementById('q-' + id).value) || 0;
             const d = isWhatIf ? sandboxData : realData;
             const e = d.envelopes.find(i => i.id === id);
             if(e) {
-                e.current += amt;
-                if(!isWhatIf) localStorage.setItem('salary_planner_v5', JSON.stringify(realData));
+                e.current += val;
+                if(!isWhatIf) localStorage.setItem('salary_planner_v6', JSON.stringify(realData));
                 render();
             }
         }
 
-        function movePriority(id, step) {
+        function delEnv(id) {
+            if(!confirm(i18n[lang].confirm_del)) return;
             const d = isWhatIf ? sandboxData : realData;
-            const idx = d.envelopes.findIndex(i => i.id === id);
-            if((idx === 0 && step === -1) || (idx === d.envelopes.length - 1 && step === 1)) return;
-            const item = d.envelopes.splice(idx, 1)[0];
-            d.envelopes.splice(idx + step, 0, item);
-            if(!isWhatIf) localStorage.setItem('salary_planner_v5', JSON.stringify(realData));
+            d.envelopes = d.envelopes.filter(i => i.id !== id);
+            if(!isWhatIf) localStorage.setItem('salary_planner_v6', JSON.stringify(realData));
             render();
         }
 
-        function openAddModal() { editId = null; document.getElementById('modalTitle').textContent = 'Add New Envelope'; document.getElementById('envModal').classList.add('active'); }
+        function resetAll() {
+            if(!confirm(i18n[lang].confirm_reset)) return;
+            realData = { salary: 0, startDate: new Date().toISOString().split('T')[0], envelopes: [] };
+            localStorage.removeItem('salary_planner_v6');
+            location.reload();
+        }
+
+        function movePrio(id, st) {
+            const d = isWhatIf ? sandboxData : realData;
+            const idx = d.envelopes.findIndex(i => i.id === id);
+            if((idx === 0 && st === -1) || (idx === d.envelopes.length - 1 && st === 1)) return;
+            const item = d.envelopes.splice(idx, 1)[0];
+            d.envelopes.splice(idx + st, 0, item);
+            if(!isWhatIf) localStorage.setItem('salary_planner_v6', JSON.stringify(realData));
+            render();
+        }
+
+        function openAddModal() { 
+            editId = null; 
+            document.getElementById('modalTitle').textContent = i18n[lang].modal_add;
+            document.getElementById('mName').value = '';
+            document.getElementById('mTarget').value = '';
+            document.getElementById('mCurrent').value = '';
+            document.getElementById('mMonthly').value = '';
+            document.getElementById('envModal').classList.add('active'); 
+        }
+
         function openEditModal(id) {
             editId = id;
             const d = isWhatIf ? sandboxData : realData;
@@ -448,13 +707,14 @@
             document.getElementById('mTarget').value = e.target;
             document.getElementById('mCurrent').value = e.current;
             document.getElementById('mMonthly').value = e.monthly;
-            document.getElementById('modalTitle').textContent = 'Update Envelope';
+            document.getElementById('modalTitle').textContent = i18n[lang].modal_update;
             document.getElementById('envModal').classList.add('active');
         }
+
         function closeModal() { document.getElementById('envModal').classList.remove('active'); }
         
-        function saveEnv(event) {
-            event.preventDefault();
+        function saveEnv(ev) {
+            ev.preventDefault();
             const e = {
                 id: editId || Date.now(),
                 name: document.getElementById('mName').value,
@@ -468,36 +728,33 @@
                 const idx = d.envelopes.findIndex(i => i.id === editId);
                 d.envelopes[idx] = e;
             } else { d.envelopes.push(e); }
-            if(!isWhatIf) localStorage.setItem('salary_planner_v5', JSON.stringify(realData));
+            if(!isWhatIf) localStorage.setItem('salary_planner_v6', JSON.stringify(realData));
             closeModal(); render();
-        }
-
-        function deleteEnv(id) {
-            const d = isWhatIf ? sandboxData : realData;
-            d.envelopes = d.envelopes.filter(i => i.id !== id);
-            if(!isWhatIf) localStorage.setItem('salary_planner_v5', JSON.stringify(realData));
-            render();
         }
 
         function updateGlobal() {
             const d = isWhatIf ? sandboxData : realData;
             d.salary = parseFloat(document.getElementById('cfgSalary').value) || 0;
             d.startDate = document.getElementById('cfgDate').value;
-            if(!isWhatIf) localStorage.setItem('salary_planner_v5', JSON.stringify(realData));
+            if(!isWhatIf) localStorage.setItem('salary_planner_v6', JSON.stringify(realData));
             render();
         }
 
         function exportData() {
-            const blob = new Blob([JSON.stringify(realData, null, 2)], {type: 'application/json'});
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-            a.download = `salary-planner-v5.json`; a.click();
+            const b = new Blob([JSON.stringify(realData, null, 2)], {type: 'application/json'});
+            const a = document.createElement('a'); a.href = URL.createObjectURL(b);
+            a.download = `salary-planner-v6.json`; a.click();
         }
 
-        function importData(e) {
-            const file = e.target.files[0]; if(!file) return;
-            const reader = new FileReader();
-            reader.onload = (ev) => { realData = JSON.parse(ev.target.result); localStorage.setItem('salary_planner_v5', JSON.stringify(realData)); location.reload(); };
-            reader.readAsText(file);
+        function importData(ev) {
+            const f = ev.target.files[0]; if(!f) return;
+            const r = new FileReader();
+            r.onload = (e) => { 
+                realData = JSON.parse(e.target.result); 
+                localStorage.setItem('salary_planner_v6', JSON.stringify(realData)); 
+                location.reload(); 
+            };
+            r.readAsText(f);
         }
         load();
     </script>
