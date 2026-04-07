@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,10 +29,7 @@
         }
 
         [dir="rtl"] { font-family: 'Tajawal', 'Segoe UI', Tahoma, sans-serif; }
-            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-        el.placeholder = i18next.t(el.getAttribute('data-i18n-placeholder'));
-    });
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+                * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
 
         body {
