@@ -11,11 +11,11 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; background: #f5f7fa; color: #2c3e50; }
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px 20px; margin-bottom: 24px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 24px 20px; margin-bottom: 24px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
         h1 { font-size: 28px; margin-bottom: 8px; }
         .salary-input { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .input-group { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-        input[type="number"], input[type="text"], input[type="date"] { padding: 12px; border: 2px solid #e1e8ed; border-radius: 6px; font-size: 16px; flex: 1; min-width: 200px; }
+        input[type="number"], input[type="text"], input[type="date"] { padding: 12px; border: 2px solid #e1e8ed; border-radius: 6px; font-size: 16px; flex: 1; min-width: 150px; }
         input:focus { outline: none; border-color: #667eea; }
         button { padding: 12px 24px; background: #667eea; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: 600; transition: all 0.2s; }
         button:hover { background: #5568d3; transform: translateY(-1px); }
@@ -24,13 +24,13 @@
         .btn-secondary:hover { background: #38a169; }
         .btn-danger { background: #f56565; }
         .btn-danger:hover { background: #e53e3e; }
+        .btn-outline { background: transparent; border: 2px solid #667eea; color: #667eea; }
+        .btn-outline:hover { background: #667eea; color: white; }
         .envelopes { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; margin-bottom: 24px; }
-        .envelope { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 4px solid #667eea; transition: all 0.2s; }
-        .envelope:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.1); transform: translateY(-2px); }
+        .envelope { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 4px solid #667eea; position: relative; }
         .envelope.goal { border-left-color: #48bb78; }
         .envelope.debt { border-left-color: #f56565; }
         .envelope.budget { border-left-color: #ed8936; }
-        .envelope.completed { opacity: 0.7; background: #f7fafc; }
         .envelope-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; }
         .envelope-title { font-size: 18px; font-weight: 600; }
         .envelope-type { font-size: 12px; text-transform: uppercase; color: #718096; font-weight: 600; }
@@ -43,64 +43,71 @@
         .envelope.goal .progress-fill { background: #48bb78; }
         .envelope.debt .progress-fill { background: #f56565; }
         .envelope.budget .progress-fill { background: #ed8936; }
-        .envelope-info { font-size: 14px; color: #718096; margin-top: 8px; }
-        .envelope-actions { margin-top: 12px; display: flex; gap: 8px; }
-        .envelope-actions button { font-size: 14px; padding: 8px 16px; }
+        .envelope-update-area { background: #f7fafc; padding: 12px; border-radius: 6px; margin-top: 12px; border: 1px dashed #cbd5e0; }
+        .update-input-group { display: flex; gap: 8px; align-items: center; }
+        .update-input-group input { flex: 1; padding: 8px; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 14px; }
         .summary { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px; }
-        .summary-card { padding: 16px; background: #f7fafc; border-radius: 6px; }
-        .summary-label { font-size: 14px; color: #718096; margin-bottom: 4px; }
-        .summary-value { font-size: 24px; font-weight: 700; }
+        .summary-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        .summary-table th, .summary-table td { text-align: left; padding: 12px; border-bottom: 1px solid #edf2f7; }
+        .summary-table th { color: #718096; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+        .summary-table tr:last-child { border-bottom: none; font-weight: 700; background: #f7fafc; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
         .modal.active { display: flex; }
-        .modal-content { background: white; padding: 32px; border-radius: 12px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; }
-        .modal-header { font-size: 24px; font-weight: 700; margin-bottom: 20px; }
-        .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #4a5568; }
-        .form-actions { display: flex; gap: 12px; margin-top: 24px; }
-        .form-actions button { flex: 1; }
-        .redirect-list { margin-top: 12px; }
-        .redirect-item { background: #f7fafc; padding: 12px; border-radius: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        select { padding: 12px; border: 2px solid #e1e8ed; border-radius: 6px; font-size: 16px; width: 100%; }
-        .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
-        .badge.completed { background: #48bb78; color: white; }
+        .modal-content { background: white; padding: 32px; border-radius: 12px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        .plan-table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px; }
+        .plan-table th, .plan-table td { padding: 8px; border: 1px solid #e2e8f0; text-align: center; }
+        .plan-table th { background: #f7fafc; }
+        .action-btns { display: flex; gap: 10px; }
+        .badge { padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+        .badge-goal { background: #c6f6d5; color: #22543d; }
+        .badge-debt { background: #fed7d7; color: #822727; }
+        .badge-budget { background: #feebc8; color: #744210; }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>💰 Salary Envelope Planner</h1>
-            <p>Plan your monthly salary across goals, debts, and budgets</p>
+            <div>
+                <h1>💰 Salary Planner</h1>
+                <p>Plan your monthly salary across goals, debts, and budgets</p>
+            </div>
+            <div class="action-btns">
+                <button onclick="exportData()" class="btn-outline">Export</button>
+                <button onclick="document.getElementById('importFile').click()" class="btn-outline">Import</button>
+                <input type="file" id="importFile" style="display:none" onchange="importData(event)">
+            </div>
         </header>
 
         <div class="salary-input">
-            <h2 style="margin-bottom: 12px;">Monthly Salary</h2>
+            <h2 style="margin-bottom: 12px;">Monthly Salary Configuration</h2>
             <div class="input-group">
-                <input type="number" id="salary" placeholder="Enter monthly salary" value="10000">
-                <input type="date" id="startDate" value="">
-                <button onclick="updateSalary()">Update</button>
+                <input type="number" id="salary" placeholder="Monthly salary" value="10000">
+                <input type="date" id="startDate">
+                <button onclick="updateGlobalSettings()">Save Settings</button>
+                <button onclick="showPlanTable()" class="btn-outline">View Plan Table</button>
             </div>
         </div>
 
         <div class="summary">
-            <h2>Summary</h2>
-            <div class="summary-grid">
-                <div class="summary-card">
-                    <div class="summary-label">Monthly Salary</div>
-                    <div class="summary-value" id="summarySalary">0</div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-label">Total Allocated</div>
-                    <div class="summary-value" id="summaryAllocated">0</div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-label">Remaining</div>
-                    <div class="summary-value" id="summaryRemaining" style="color: #48bb78;">0</div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-label">Active Envelopes</div>
-                    <div class="summary-value" id="summaryActive">0</div>
-                </div>
+            <h2>Detailed Summary</h2>
+            <div style="overflow-x: auto;">
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th>Envelope Name</th>
+                            <th>Type</th>
+                            <th>Target</th>
+                            <th>Current</th>
+                            <th>Allocation</th>
+                            <th>Remaining</th>
+                            <th>Est. Months</th>
+                        </tr>
+                    </thead>
+                    <tbody id="summaryBody"></tbody>
+                    <tfoot>
+                        <tr id="summaryTotalRow"></tr>
+                    </tfoot>
+                </table>
             </div>
         </div>
 
@@ -112,43 +119,60 @@
         <div class="envelopes" id="envelopesList"></div>
     </div>
 
+    <!-- Add/Edit Modal -->
     <div class="modal" id="envelopeModal">
         <div class="modal-content">
-            <div class="modal-header" id="modalTitle">Add Envelope</div>
+            <h2 id="modalTitle" style="margin-bottom: 20px;">Add Envelope</h2>
             <form id="envelopeForm" onsubmit="saveEnvelope(event)">
-                <div class="form-group">
-                    <label>Name</label>
-                    <input type="text" id="envName" required>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div style="margin-bottom: 16px;">
+                        <label style="display:block; margin-bottom: 8px; font-weight:600;">Name</label>
+                        <input type="text" id="envName" style="width:100%" required>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <label style="display:block; margin-bottom: 8px; font-weight:600;">Type</label>
+                        <select id="envType" style="width:100%; padding:12px; border:2px solid #e1e8ed; border-radius:6px;" required>
+                            <option value="goal">Goal</option>
+                            <option value="debt">Debt</option>
+                            <option value="budget">Budget</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Type</label>
-                    <select id="envType" required>
-                        <option value="goal">Goal</option>
-                        <option value="debt">Debt</option>
-                        <option value="budget">Budget</option>
-                    </select>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div style="margin-bottom: 16px;">
+                        <label style="display:block; margin-bottom: 8px; font-weight:600;">Target Amount</label>
+                        <input type="number" id="envTarget" style="width:100%" required>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <label style="display:block; margin-bottom: 8px; font-weight:600;">Current Amount</label>
+                        <input type="number" id="envCurrent" style="width:100%" value="0">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Target Amount</label>
-                    <input type="number" id="envTarget" required min="0">
+                <div style="margin-bottom: 16px;">
+                    <label style="display:block; margin-bottom: 8px; font-weight:600;">Monthly Allocation</label>
+                    <input type="number" id="envMonthly" style="width:100%" required>
                 </div>
-                <div class="form-group">
-                    <label>Monthly Allocation</label>
-                    <input type="number" id="envMonthly" required min="0">
-                </div>
-                <div class="form-group" id="redirectGroup" style="display:none;">
-                    <label>When completed, redirect to:</label>
-                    <select id="redirectTo">
-                        <option value="">None</option>
-                    </select>
-                    <button type="button" onclick="addRedirect()" style="margin-top:8px; width:100%;">+ Add Redirect</button>
-                    <div class="redirect-list" id="redirectList"></div>
-                </div>
-                <div class="form-actions">
-                    <button type="button" onclick="closeModal()" class="btn-danger">Cancel</button>
-                    <button type="submit" class="btn-secondary">Save</button>
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button type="button" onclick="closeModal()" class="btn-danger" style="flex:1">Cancel</button>
+                    <button type="submit" class="btn-secondary" style="flex:1">Save Envelope</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Plan Table Modal -->
+    <div class="modal" id="planModal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>Future Plan Table</h2>
+                <button onclick="document.getElementById('planModal').classList.remove('active')" class="btn-danger">Close</button>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="plan-table" id="planTable">
+                    <thead><tr id="planTableHeader"></tr></thead>
+                    <tbody id="planTableBody"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -161,21 +185,21 @@
         let editingId = null;
 
         function loadData() {
-            const stored = localStorage.getItem('salaryEnvelopePlan');
+            const stored = localStorage.getItem('salaryEnvelopePlan_v2');
             if (stored) {
                 data = JSON.parse(stored);
             }
             document.getElementById('salary').value = data.salary;
-            document.getElementById('startDate').value = data.startDate;
+            document.getElementById('startDate').value = data.startDate || new Date().toISOString().split('T')[0];
             render();
         }
 
         function saveData() {
-            localStorage.setItem('salaryEnvelopePlan', JSON.stringify(data));
+            localStorage.setItem('salaryEnvelopePlan_v2', JSON.stringify(data));
             render();
         }
 
-        function updateSalary() {
+        function updateGlobalSettings() {
             data.salary = parseFloat(document.getElementById('salary').value) || 0;
             data.startDate = document.getElementById('startDate').value;
             saveData();
@@ -185,8 +209,6 @@
             editingId = null;
             document.getElementById('modalTitle').textContent = 'Add Envelope';
             document.getElementById('envelopeForm').reset();
-            document.getElementById('redirectGroup').style.display = 'block';
-            updateRedirectOptions();
             document.getElementById('envelopeModal').classList.add('active');
         }
 
@@ -197,9 +219,8 @@
             document.getElementById('envName').value = env.name;
             document.getElementById('envType').value = env.type;
             document.getElementById('envTarget').value = env.target;
+            document.getElementById('envCurrent').value = env.current;
             document.getElementById('envMonthly').value = env.monthly;
-            document.getElementById('redirectGroup').style.display = 'block';
-            updateRedirectOptions();
             document.getElementById('envelopeModal').classList.add('active');
         }
 
@@ -213,18 +234,14 @@
                 id: editingId || Date.now(),
                 name: document.getElementById('envName').value,
                 type: document.getElementById('envType').value,
-                target: parseFloat(document.getElementById('envTarget').value),
-                monthly: parseFloat(document.getElementById('envMonthly').value),
-                current: 0,
-                completed: false,
-                redirects: []
+                target: parseFloat(document.getElementById('envTarget').value) || 0,
+                current: parseFloat(document.getElementById('envCurrent').value) || 0,
+                monthly: parseFloat(document.getElementById('envMonthly').value) || 0,
+                completed: false
             };
 
             if (editingId) {
                 const index = data.envelopes.findIndex(e => e.id === editingId);
-                envelope.current = data.envelopes[index].current;
-                envelope.completed = data.envelopes[index].completed;
-                envelope.redirects = data.envelopes[index].redirects || [];
                 data.envelopes[index] = envelope;
             } else {
                 data.envelopes.push(envelope);
@@ -241,114 +258,170 @@
             }
         }
 
-        function addRedirect() {
-            const targetId = document.getElementById('redirectTo').value;
-            if (!targetId) return;
-
-            const currentId = editingId;
-            const targetEnv = data.envelopes.find(e => e.id == targetId);
-            if (!targetEnv) return;
-
-            if (currentId) {
-                const env = data.envelopes.find(e => e.id === currentId);
-                if (!env.redirects) env.redirects = [];
-                if (!env.redirects.some(r => r.targetId == targetId)) {
-                    env.redirects.push({ targetId: parseInt(targetId), percentage: 100 });
-                    saveData();
-                }
+        function updateCurrentAmount(id) {
+            const input = document.getElementById(`updateInput-${id}`);
+            const updateVal = parseFloat(input.value) || 0;
+            const env = data.envelopes.find(e => e.id === id);
+            
+            // This is "update for this time" logic - we add it to the total current
+            env.current += updateVal;
+            if (env.type !== 'budget' && env.current >= env.target) {
+                env.current = env.target;
+                env.completed = true;
             }
+            saveData();
         }
 
-        function updateRedirectOptions() {
-            const select = document.getElementById('redirectTo');
-            select.innerHTML = '<option value="">Select envelope...</option>';
-            data.envelopes.forEach(env => {
-                if (!editingId || env.id !== editingId) {
-                    select.innerHTML += `<option value="${env.id}">${env.name}</option>`;
+        function exportData() {
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `salary-planner-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        }
+
+        function importData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    data = JSON.parse(event.target.result);
+                    saveData();
+                    location.reload();
+                } catch (err) {
+                    alert('Invalid JSON file');
                 }
-            });
+            };
+            reader.readAsText(file);
         }
 
-        function calculate() {
-            const startDate = new Date(data.startDate);
-            const currentDate = new Date();
-
+        function calculateMetrics() {
             data.envelopes.forEach(env => {
                 if (env.type === 'budget') {
-                    env.current = env.monthly;
                     env.remaining = 0;
+                    env.monthsLeft = 0;
                 } else {
-                    if (!env.completed && env.current < env.target) {
-                        const monthsElapsed = Math.max(0, Math.floor((currentDate - startDate) / (1000 * 60 * 60 * 24 * 30)));
-                        env.current = Math.min(env.target, env.monthly * monthsElapsed);
-
-                        if (env.current >= env.target) {
-                            env.completed = true;
-                        }
-                    }
-
-                    if (!env.completed) {
-                        env.remaining = env.target - env.current;
-                        env.monthsLeft = Math.ceil(env.remaining / env.monthly);
-                        env.completionDate = new Date(currentDate);
-                        env.completionDate.setMonth(env.completionDate.getMonth() + env.monthsLeft);
-                    }
+                    env.remaining = Math.max(0, env.target - env.current);
+                    env.monthsLeft = env.monthly > 0 ? Math.ceil(env.remaining / env.monthly) : Infinity;
                 }
             });
         }
 
         function render() {
-            calculate();
-
+            calculateMetrics();
+            
+            // Render Cards
             const list = document.getElementById('envelopesList');
             list.innerHTML = '';
-
-            let totalAllocated = 0;
-            let activeCount = 0;
-
             data.envelopes.forEach(env => {
-                if (!env.completed || env.type === 'budget') {
-                    totalAllocated += env.monthly;
-                    activeCount++;
-                }
-
                 const progress = env.type === 'budget' ? 100 : Math.min(100, (env.current / env.target) * 100);
-
                 const card = document.createElement('div');
-                card.className = `envelope ${env.type} ${env.completed ? 'completed' : ''}`;
+                card.className = `envelope ${env.type}`;
                 card.innerHTML = `
                     <div class="envelope-header">
                         <div>
                             <div class="envelope-type">${env.type}</div>
                             <div class="envelope-title">${env.name}</div>
                         </div>
-                        ${env.completed ? '<span class="badge completed">✓ Completed</span>' : ''}
+                        <div class="action-btns">
+                            <button onclick="showEditModal(${env.id})" style="padding:4px 8px; font-size:12px;">Edit</button>
+                            <button onclick="deleteEnvelope(${env.id})" class="btn-danger" style="padding:4px 8px; font-size:12px;">X</button>
+                        </div>
                     </div>
                     <div class="envelope-amount">${env.current.toLocaleString()} / ${env.target.toLocaleString()}</div>
                     <div class="progress-bar"><div class="progress-fill" style="width: ${progress}%"></div></div>
-                    <div class="envelope-info">
-                        ${env.type === 'budget' 
-                            ? `Monthly: ${env.monthly.toLocaleString()}`
-                            : env.completed 
-                                ? 'Goal achieved!'
-                                : `${env.monthsLeft} months left • ${env.monthly.toLocaleString()}/mo • Est: ${env.completionDate.toLocaleDateString('en-US', {month: 'short', year: 'numeric'})}`
-                        }
-                    </div>
-                    <div class="envelope-actions">
-                        <button onclick="showEditModal(${env.id})">Edit</button>
-                        <button onclick="deleteEnvelope(${env.id})" class="btn-danger">Delete</button>
+                    <div class="envelope-update-area">
+                        <div style="font-size:12px; color:#718096; margin-bottom:4px;">Allocation: ${env.monthly.toLocaleString()}</div>
+                        <div class="update-input-group">
+                            <input type="number" id="updateInput-${env.id}" value="${env.monthly}" placeholder="Amount">
+                            <button onclick="updateCurrentAmount(${env.id})" style="padding:8px 12px; font-size:12px;">Update</button>
+                        </div>
                     </div>
                 `;
                 list.appendChild(card);
             });
 
-            document.getElementById('summarySalary').textContent = data.salary.toLocaleString();
-            document.getElementById('summaryAllocated').textContent = totalAllocated.toLocaleString();
-            document.getElementById('summaryRemaining').textContent = (data.salary - totalAllocated).toLocaleString();
-            document.getElementById('summaryActive').textContent = activeCount;
+            // Render Summary Table
+            const body = document.getElementById('summaryBody');
+            body.innerHTML = '';
+            let totals = { target: 0, current: 0, allocation: 0, remaining: 0 };
+            
+            data.envelopes.forEach(env => {
+                totals.target += env.target;
+                totals.current += env.current;
+                totals.allocation += env.monthly;
+                totals.remaining += env.remaining;
 
-            const remaining = data.salary - totalAllocated;
-            document.getElementById('summaryRemaining').style.color = remaining >= 0 ? '#48bb78' : '#f56565';
+                body.innerHTML += `
+                    <tr>
+                        <td>${env.name}</td>
+                        <td><span class="badge badge-${env.type}">${env.type}</span></td>
+                        <td>${env.target.toLocaleString()}</td>
+                        <td>${env.current.toLocaleString()}</td>
+                        <td>${env.monthly.toLocaleString()}</td>
+                        <td>${env.remaining.toLocaleString()}</td>
+                        <td>${env.monthsLeft === Infinity ? '∞' : env.monthsLeft}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('summaryTotalRow').innerHTML = `
+                <td colspan="2">TOTALS</td>
+                <td>${totals.target.toLocaleString()}</td>
+                <td>${totals.current.toLocaleString()}</td>
+                <td>${totals.allocation.toLocaleString()}</td>
+                <td>${totals.remaining.toLocaleString()}</td>
+                <td>-</td>
+            `;
+        }
+
+        function showPlanTable() {
+            const modal = document.getElementById('planModal');
+            const header = document.getElementById('planTableHeader');
+            const body = document.getElementById('planTableBody');
+            
+            header.innerHTML = '<th>Month</th>';
+            data.envelopes.forEach(env => header.innerHTML += `<th>${env.name}</th>`);
+            header.innerHTML += '<th>Remaining Salary</th>';
+
+            body.innerHTML = '';
+            
+            let simEnvelopes = data.envelopes.map(e => ({...e, simCurrent: e.current}));
+            let simStartDate = new Date(data.startDate);
+
+            for (let m = 0; m < 24; m++) {
+                let monthDate = new Date(simStartDate);
+                monthDate.setMonth(monthDate.getMonth() + m);
+                let row = `<td>${monthDate.toLocaleDateString('en-US', {month: 'short', year: 'numeric'})}</td>`;
+                
+                let monthlyRemaining = data.salary;
+                let activeAllocations = 0;
+
+                simEnvelopes.forEach(env => {
+                    let allocation = 0;
+                    if (env.type === 'budget') {
+                        allocation = env.monthly;
+                    } else if (env.simCurrent < env.target) {
+                        allocation = Math.min(env.monthly, env.target - env.simCurrent);
+                        env.simCurrent += allocation;
+                    }
+                    
+                    monthlyRemaining -= allocation;
+                    row += `<td style="${env.simCurrent >= env.target && env.type !== 'budget' ? 'color:#48bb78; font-weight:bold;' : ''}">${env.simCurrent.toLocaleString()}</td>`;
+                });
+
+                row += `<td style="font-weight:bold; color:${monthlyRemaining >= 0 ? '#48bb78' : '#f56565'}">${monthlyRemaining.toLocaleString()}</td>`;
+                body.innerHTML += `<tr>${row}</tr>`;
+
+                // Stop if all non-budgets are done
+                if (simEnvelopes.every(e => e.type === 'budget' || e.simCurrent >= e.target)) {
+                    if (m > 0) break; // Ensure at least 1 month shows
+                }
+            }
+
+            modal.classList.add('active');
         }
 
         if ('serviceWorker' in navigator) {
