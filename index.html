@@ -213,6 +213,17 @@
         .env-card.debt { border-color: var(--danger); }
         .env-card.budget { border-color: var(--warning); }
 
+        .env-prio { display: flex; flex-direction: column; gap: 5px; position: absolute; right: 15px; top: 20px; }
+        [dir="rtl"] .env-prio { right: auto; left: 15px; }
+        .prio-btn { width: 32px; height: 32px; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text-muted); }
+        .prio-btn:hover { background: #e2e8f0; color: var(--text-main); }
+
+        .update-bar { margin-top: 20px; padding-top: 20px; border-top: 1px solid #f1f5f9; display: flex; gap: 12px; align-items: center; }
+        .inp-sm { width: 110px; padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 14px; font-weight: 700; }
+
+        .gantt-item { display: grid; grid-template-columns: 220px 1fr; border-bottom: 1px solid #f1f5f9; align-items: center; min-height: 55px; }
+        .gantt-lbl { font-weight: 700; color: var(--text-main); font-size: 14px; }
+
         .modal {
             display: none;
             position: fixed;
@@ -516,6 +527,7 @@
             document.getElementById('tab-' + t).classList.add('active');
             document.querySelectorAll('.pane').forEach(s => s.classList.remove('active'));
             document.getElementById(t + 'Section').classList.add('active');
+            if(t === 'visual') renderTimeline();
         }
 
         function render() {
@@ -622,7 +634,11 @@
                     const prog = e.type === 'budget' ? 100 : Math.min(100, (e.current / e.target) * 100);
                     grid.innerHTML += `
                         <div class="env-card ${e.type}">
-                            <div style="display:flex; justify-content:space-between;">
+                            <div class="env-prio">
+                                <button class="prio-btn" onclick="movePrio(${e.id}, -1)">▲</button>
+                                <button class="prio-btn" onclick="movePrio(${e.id}, 1)">▼</button>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
                                 <div>
                                     <span class="badge badge-${e.type}">${i18next.t(e.type)}</span>
                                     <div style="font-weight:800; font-size:18px; margin-top:5px;">${e.name}</div>
@@ -642,15 +658,57 @@
                                 <span>${i18next.t('lbl_mon_ded')}: ${e.monthly.toLocaleString()}</span>
                                 <span>${e.type==='budget' ? i18next.t('lbl_permanent') : months + ' ' + i18next.t('lbl_mon_left')}</span>
                             </div>
+                            <div class="update-bar">
+                                <span style="font-size: 12px; font-weight: 700; color: var(--text-muted);">${i18next.t('quick_dep')}:</span>
+                                <input type="number" id="q-${e.id}" class="inp-sm" value="${e.monthly}">
+                                <button class="btn btn-success" style="padding: 8px 15px; font-size: 12px;" onclick="quickUp(${e.id})">${i18next.t('btn_update')}</button>
+                            </div>
                         </div>
                     `;
                 });
             });
         }
 
+        function renderTimeline() {
+            const d = isWhatIf ? sandboxData : realData;
+            const ch = document.getElementById('ganttChart');
+            ch.innerHTML = '';
+            d.envelopes.filter(e => e.type !== 'budget').forEach(e => {
+                const r = Math.max(0, e.target - e.current);
+                const dur = e.monthly > 0 ? Math.ceil(r / e.monthly) : 0;
+                const wp = Math.min(100, (dur / 12) * 100);
+                const row = document.createElement('div');
+                row.className = 'gantt-item';
+                row.innerHTML = `
+                    <div class="gantt-lbl">${e.name}</div>
+                    <div class="gantt-bar-wrap" style="height:36px; background:#f8fafc; border-radius:18px; overflow:hidden; margin:10px 0; position:relative;">
+                        <div class="gantt-bar" style="width:${wp}%; height:100%; background:var(--${e.type==='goal'?'success':'danger'}); border-radius:18px; display:flex; align-items:center; padding:0 18px; color:white; font-size:12px; font-weight:800; transition: width 0.5s ease;">
+                            ${dur} ${i18next.t('col_months')}
+                        </div>
+                    </div>
+                `;
+                ch.appendChild(row);
+            });
+        }
+
+        function movePrio(id, st) {
+            const d = isWhatIf ? sandboxData : realData;
+            const idx = d.envelopes.findIndex(i => i.id === id);
+            if((idx === 0 && st === -1) || (idx === d.envelopes.length - 1 && st === 1)) return;
+            const item = d.envelopes.splice(idx, 1)[0];
+            d.envelopes.splice(idx + st, 0, item);
+            if(!isWhatIf) localStorage.setItem('salary_planner_v6', JSON.stringify(realData));
+            render();
+        }
+
         function openAddModal() {
             editId = null;
             document.getElementById('modalTitle').innerText = i18next.t('modal_add');
+            document.getElementById('mName').value = '';
+            document.getElementById('mType').value = 'goal';
+            document.getElementById('mTarget').value = '';
+            document.getElementById('mCurrent').value = '';
+            document.getElementById('mMonthly').value = '';
             document.getElementById('envModal').classList.add('active');
         }
 
@@ -695,7 +753,11 @@
             const val = parseFloat(document.getElementById('q-' + id).value) || 0;
             const d = isWhatIf ? sandboxData : realData;
             const e = d.envelopes.find(i => i.id === id);
-            if(e) { e.current += val; if(!isWhatIf) localStorage.setItem('salary_planner_v6', JSON.stringify(realData)); render(); }
+            if(e) { 
+                e.current += val; 
+                if(!isWhatIf) localStorage.setItem('salary_planner_v6', JSON.stringify(realData)); 
+                render(); 
+            }
         }
 
         function delEnv(id) {
@@ -735,6 +797,16 @@
             if(!confirm(i18next.t('confirm_reset'))) return;
             localStorage.removeItem('salary_planner_v6');
             location.reload();
+        }
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(reg => {
+                    console.log('Service Worker registered');
+                }).catch(err => {
+                    console.log('Service Worker registration failed', err);
+                });
+            });
         }
 
         load();
