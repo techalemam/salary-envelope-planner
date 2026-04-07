@@ -242,7 +242,7 @@
         .badge-debt { background: #fee2e2; color: #991b1b; }
         .badge-goal { background: #d1fae5; color: #065f46; }
         .num-cell { text-align: end; font-weight: 600; }
-        .btn-danger { background: var(--danger); color: white; }
+        .btn-primary { background: var(--primary); color: white; } .btn-primary:hover { background: var(--primary-dark); } .btn-danger { background: var(--danger); color: white; }
         .btn-danger:hover { background: #dc2626; }
         .btn-success { background: var(--success); color: white; }
         .btn-success:hover { background: #059669; }
@@ -344,11 +344,11 @@
                 </div>
                 <div id="targetGrp">
                     <label style="display:block; margin-bottom:8px; font-weight:700;" data-i18n="col_target">Target Amount</label>
-                    <input type="number" id="mTarget" class="field">
+                    <input type="number" id="mTarget" class="field" oninput="updateModalSuggest()">
                 </div>
                 <div id="dueGrp">
                     <label style="display:block; margin-bottom:8px; font-weight:700;" data-i18n="col_due">Due Date</label>
-                    <input type="date" id="mDue" class="field">
+                    <input type="date" id="mDue" class="field" onchange="updateModalSuggest()"> <div id="modalSuggest" style="display:none;" class="suggest-tip"></div>
                 </div>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
                     <div>
@@ -397,7 +397,7 @@
                 confirm_del: "Are you sure you want to delete this envelope?",
                 confirm_reset: "RESET ALL DATA? This cannot be undone.",
             sec_timeline: "Financial Freedom Timeline", sec_config: "Configuration", lbl_monthly_salary: "Monthly Salary", lbl_start_date: "Plan Start Date",
-                modal_add: "Create New Envelope", modal_update: "Update Envelope", export: "Export", import: "Import", warning_overAllocated: "Total monthly allocations exceed salary"
+                modal_add: "Create New Envelope", modal_update: "Update Envelope", export: "Export", import: "Import", warning_overAllocated: "Total monthly allocations exceed salary", empty_state: "No envelopes yet", empty_state_hint: "Click + Add Envelope to get started", alloc_pct: "Allocated"
             }},
             ar: { translation: {
                 app_title: "💰 مخطط الراتب الذكي",
@@ -420,7 +420,7 @@
                 confirm_del: "هل أنت متأكد من حذف هذا الظرف؟",
                 confirm_reset: "هل تريد مسح جميع البيانات؟ لا يمكن التراجع.",
                             sec_timeline: "الجدول الزمني للحرية المالية", sec_config: "الإعدادات", lbl_monthly_salary: "الراتب الشهري", lbl_start_date: "تاريخ بدء الخطة",
-modal_add: "إنشاء ظرف جديد", modal_update: "تحديث بيانات الظرف", export: "تصدير", import: "استيراد", warning_overAllocated: "الاستقطاعات الشهرية تجاوزت الراتب"
+modal_add: "إنشاء ظرف جديد", modal_update: "تحديث بيانات الظرف", export: "تصدير", import: "استيراد", warning_overAllocated: "الاستقطاعات الشهرية تجاوزت الراتب", empty_state: "لا توجد أظرف بعد", empty_state_hint: "اضغط + إضافة ظرف جديد للبدء", alloc_pct: "مخصص"
             }}
         };
 
@@ -477,7 +477,7 @@ modal_add: "إنشاء ظرف جديد", modal_update: "تحديث بيانات 
                 <div class="stat-card" style="border-color: var(--primary);">
                     <div class="stat-label">${i18next.t('lbl_unallocated')}</div>
                     <div class="stat-val num" style="color: ${unalloc < 0 ? 'var(--danger)' : 'inherit'}">
-                        ${unalloc.toLocaleString()}
+                        ${unalloc.toLocaleString()} <span style="font-size:13px;color:var(--text-muted);font-weight:600;">(${Math.round((d.salary-unalloc)/d.salary*100)||0}% ${i18next.t('alloc_pct')})</span>
                     </div>
                 </div>
             `;
@@ -508,7 +508,7 @@ modal_add: "إنشاء ظرف جديد", modal_update: "تحديث بيانات 
 
         function renderCards(d) {
             const cont = document.getElementById('categorySections');
-            cont.innerHTML = '';
+            cont.innerHTML = ''; if(d.envelopes.length === 0) { cont.innerHTML = '<div style="text-align:center;padding:60px 20px;color:var(--text-muted);"><div style="font-size:64px;">📭</div><h3 style="margin-top:16px;font-size:20px;font-weight:800;">' + i18next.t('empty_state') + '</h3><p style="margin-top:8px;font-size:14px;">' + i18next.t('empty_state_hint') + '</p></div>'; return; }
             ['budget', 'debt', 'goal'].forEach(type => {
                 const envs = d.envelopes.filter(e => e.type === type);
                 if(envs.length === 0) return;
@@ -733,7 +733,7 @@ modal_add: "إنشاء ظرف جديد", modal_update: "تحديث بيانات 
             render();
         }
 
-        function toggleModalFields() {
+        function updateModalSuggest() { const target = parseFloat(document.getElementById('mTarget').value) || 0; const due = document.getElementById('mDue').value; const cur = parseFloat(document.getElementById('mCurrent').value) || 0; const el = document.getElementById('modalSuggest'); if(!el) return; if(target > 0 && due) { const rem = Math.max(0, target - cur); const months = getMonthsBetween(realData.startDate, due); if(months > 0) { const sug = Math.ceil(rem / months); el.style.display = 'block'; el.innerHTML = i18next.t('lbl_suggested') + ' <strong>' + sug.toLocaleString() + '</strong> / ' + i18next.t('col_months'); } else { el.style.display = 'none'; } } else { el.style.display = 'none'; } } function toggleModalFields() {
             const t = document.getElementById('mType').value;
             document.getElementById('targetGrp').style.display = t === 'budget' ? 'none' : 'block';
             document.getElementById('dueGrp').style.display = t === 'budget' ? 'none' : 'block';
