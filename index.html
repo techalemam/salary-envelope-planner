@@ -229,6 +229,32 @@
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .card-box { background: var(--card-bg); padding: 30px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 30px; }
+        .section-heading { font-size: 20px; font-weight: 800; color: var(--text-main); padding-bottom: 14px; margin-bottom: 24px; border-bottom: 2px solid #e2e8f0; }
+        .field { width: 100%; padding: 10px 14px; border: 1.5px solid #e2e8f0; border-radius: 10px; font-size: 15px; transition: border-color 0.2s; background: #fafafa; color: var(--text-main); }
+        .field:focus { outline: none; border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(99,102,241,0.1); }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        table th { padding: 10px 12px; text-align: start; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); background: #f8fafc; border-bottom: 2px solid #e2e8f0; }
+        table td { padding: 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+        table tr:hover td { background: #fafafa; }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
+        .badge-budget { background: #fef3c7; color: #92400e; }
+        .badge-debt { background: #fee2e2; color: #991b1b; }
+        .badge-goal { background: #d1fae5; color: #065f46; }
+        .num-cell { text-align: end; font-weight: 600; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-outline { border: 1.5px solid #e2e8f0; background: white; color: var(--text-muted); }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+        .inp-sm { padding: 6px 10px; border: 1.5px solid #e2e8f0; border-radius: 8px; font-size: 13px; width: 90px; }
+        .suggest-tip { margin-top: 10px; padding: 8px 12px; border-radius: 8px; font-size: 12px; background: #f0fdf4; color: #16a34a; }
+        .suggest-warn { background: #fff7ed; color: #c2410c; }
+        .pane { display: none; }
+        .pane.active { display: block; }
+        .table-wrap table { min-width: 600px; }
+        @media (max-width: 768px) { .summary-grid { position: static; } header { flex-direction: column; gap: 16px; text-align: center; } .card-box { padding: 18px; } }
     </style>
 </head>
 <body id="bodyRoot">
@@ -264,7 +290,7 @@
         <main id="planSection" class="pane active">
             <div class="card-box" style="background:var(--card-bg); padding:25px; border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:30px;">
                 <div style="display:flex; justify-content:space-between; align-items: center;">
-                    <h2 style="font-size: 20px; font-weight: 800;" data-i18n="sec_envelopes">Monthly Envelopes</h2>
+                    <h2 class="section-heading" data-i18n="sec_envelopes">Monthly Envelopes</h2>
                     <button class="btn btn-primary" onclick="openAddModal()" data-i18n="btn_add_env">+ Add Envelope</button>
                 </div>
                 <div id="summaryTableContainer" class="table-wrap" style="overflow-x:auto; margin-top:20px; border-radius:12px; border:1px solid #e2e8f0;"></div>
@@ -274,14 +300,14 @@
 
         <main id="visualSection" class="pane">
             <div class="card-box">
-                <h2 style="margin-bottom:20px;" data-i18n="sec_timeline">Financial Freedom Timeline</h2>
+                <h2 class="section-heading" data-i18n="sec_timeline">Financial Freedom Timeline</h2>
                 <div id="ganttChart" style="display:flex; flex-direction:column; gap:15px;"></div>
             </div>
         </main>
 
         <main id="settingsSection" class="pane">
             <div class="card-box">
-                <h2 style="margin-bottom:20px;" data-i18n="sec_config">Configuration</h2>
+                <h2 class="section-heading" data-i18n="sec_config">Configuration</h2>
                 <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:20px;">
                     <div>
                         <label style="display:block; margin-bottom:8px; font-weight:700; font-size:14px;" data-i18n="lbl_monthly_salary">Monthly Salary</label>
