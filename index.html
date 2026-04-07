@@ -24,10 +24,10 @@
         .btn-secondary:hover { background: #38a169; }
         .btn-danger { background: #f56565; }
         .btn-danger:hover { background: #e53e3e; }
-        .btn-outline { background: transparent; border: 2px solid #667eea; color: #667eea; }
+        .btn-outline { background: transparent; border: 2px solid #667eea; color: #667eea; padding: 8px 16px; }
         .btn-outline:hover { background: #667eea; color: white; }
         .envelopes { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; margin-bottom: 24px; }
-        .envelope { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 4px solid #667eea; position: relative; }
+        .envelope { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-left: 4px solid #667eea; }
         .envelope.goal { border-left-color: #48bb78; }
         .envelope.debt { border-left-color: #f56565; }
         .envelope.budget { border-left-color: #ed8936; }
@@ -45,20 +45,18 @@
         .envelope.budget .progress-fill { background: #ed8936; }
         .envelope-update-area { background: #f7fafc; padding: 12px; border-radius: 6px; margin-top: 12px; border: 1px dashed #cbd5e0; }
         .update-input-group { display: flex; gap: 8px; align-items: center; }
-        .update-input-group input { flex: 1; padding: 8px; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 14px; }
+        .update-input-group input { flex: 1; padding: 8px; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 14px; min-width: 80px; }
         .summary { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .summary-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
         .summary-table th, .summary-table td { text-align: left; padding: 12px; border-bottom: 1px solid #edf2f7; }
-        .summary-table th { color: #718096; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
-        .summary-table tr:last-child { border-bottom: none; font-weight: 700; background: #f7fafc; }
+        .summary-table th { color: #718096; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
         .modal.active { display: flex; }
-        .modal-content { background: white; padding: 32px; border-radius: 12px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; }
-        .plan-table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 14px; }
-        .plan-table th, .plan-table td { padding: 8px; border: 1px solid #e2e8f0; text-align: center; }
-        .plan-table th { background: #f7fafc; }
-        .action-btns { display: flex; gap: 10px; }
-        .badge { padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+        .modal-content { background: white; padding: 32px; border-radius: 12px; max-width: 800px; width: 95%; max-height: 90vh; overflow-y: auto; }
+        .plan-table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 12px; }
+        .plan-table th, .plan-table td { padding: 6px; border: 1px solid #e2e8f0; text-align: center; }
+        .plan-table th { background: #f7fafc; position: sticky; top: 0; }
+        .badge { padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; }
         .badge-goal { background: #c6f6d5; color: #22543d; }
         .badge-debt { background: #fed7d7; color: #822727; }
         .badge-budget { background: #feebc8; color: #744210; }
@@ -71,7 +69,7 @@
                 <h1>💰 Salary Planner</h1>
                 <p>Plan your monthly salary across goals, debts, and budgets</p>
             </div>
-            <div class="action-btns">
+            <div style="display: flex; gap: 8px;">
                 <button onclick="exportData()" class="btn-outline">Export</button>
                 <button onclick="document.getElementById('importFile').click()" class="btn-outline">Import</button>
                 <input type="file" id="importFile" style="display:none" onchange="importData(event)">
@@ -84,7 +82,7 @@
                 <input type="number" id="salary" placeholder="Monthly salary" value="10000">
                 <input type="date" id="startDate">
                 <button onclick="updateGlobalSettings()">Save Settings</button>
-                <button onclick="showPlanTable()" class="btn-outline">View Plan Table</button>
+                <button onclick="showPlanTable()" class="btn-outline">View Future Plan</button>
             </div>
         </div>
 
@@ -100,12 +98,12 @@
                             <th>Current</th>
                             <th>Allocation</th>
                             <th>Remaining</th>
-                            <th>Est. Months</th>
+                            <th>Months</th>
                         </tr>
                     </thead>
                     <tbody id="summaryBody"></tbody>
                     <tfoot>
-                        <tr id="summaryTotalRow"></tr>
+                        <tr id="summaryTotalRow" style="font-weight: bold; background: #f7fafc;"></tr>
                     </tfoot>
                 </table>
             </div>
@@ -119,56 +117,54 @@
         <div class="envelopes" id="envelopesList"></div>
     </div>
 
-    <!-- Add/Edit Modal -->
+    <!-- Modal for Add/Edit -->
     <div class="modal" id="envelopeModal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 500px;">
             <h2 id="modalTitle" style="margin-bottom: 20px;">Add Envelope</h2>
-            <form id="envelopeForm" onsubmit="saveEnvelope(event)">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <div style="margin-bottom: 16px;">
-                        <label style="display:block; margin-bottom: 8px; font-weight:600;">Name</label>
-                        <input type="text" id="envName" style="width:100%" required>
-                    </div>
-                    <div style="margin-bottom: 16px;">
-                        <label style="display:block; margin-bottom: 8px; font-weight:600;">Type</label>
-                        <select id="envType" style="width:100%; padding:12px; border:2px solid #e1e8ed; border-radius:6px;" required>
-                            <option value="goal">Goal</option>
-                            <option value="debt">Debt</option>
-                            <option value="budget">Budget</option>
-                        </select>
-                    </div>
+            <form onsubmit="saveEnvelope(event)">
+                <div style="margin-bottom: 12px;">
+                    <label style="display:block; margin-bottom:4px; font-weight:600;">Name</label>
+                    <input type="text" id="envName" style="width:100%" required>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                    <div style="margin-bottom: 16px;">
-                        <label style="display:block; margin-bottom: 8px; font-weight:600;">Target Amount</label>
+                <div style="margin-bottom: 12px;">
+                    <label style="display:block; margin-bottom:4px; font-weight:600;">Type</label>
+                    <select id="envType" style="width:100%; padding:12px; border:2px solid #e1e8ed; border-radius:6px;" required>
+                        <option value="goal">Goal</option>
+                        <option value="debt">Debt</option>
+                        <option value="budget">Budget</option>
+                    </select>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                    <div>
+                        <label style="display:block; margin-bottom:4px; font-weight:600;">Target Amount</label>
                         <input type="number" id="envTarget" style="width:100%" required>
                     </div>
-                    <div style="margin-bottom: 16px;">
-                        <label style="display:block; margin-bottom: 8px; font-weight:600;">Current Amount</label>
+                    <div>
+                        <label style="display:block; margin-bottom:4px; font-weight:600;">Current Amount</label>
                         <input type="number" id="envCurrent" style="width:100%" value="0">
                     </div>
                 </div>
-                <div style="margin-bottom: 16px;">
-                    <label style="display:block; margin-bottom: 8px; font-weight:600;">Monthly Allocation</label>
+                <div style="margin-bottom: 12px;">
+                    <label style="display:block; margin-bottom:4px; font-weight:600;">Monthly Allocation</label>
                     <input type="number" id="envMonthly" style="width:100%" required>
                 </div>
-                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                <div style="display: flex; gap: 12px; margin-top: 20px;">
                     <button type="button" onclick="closeModal()" class="btn-danger" style="flex:1">Cancel</button>
-                    <button type="submit" class="btn-secondary" style="flex:1">Save Envelope</button>
+                    <button type="submit" class="btn-secondary" style="flex:1">Save</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Plan Table Modal -->
+    <!-- Modal for Plan Table -->
     <div class="modal" id="planModal">
-        <div class="modal-content" style="max-width: 900px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2>Future Plan Table</h2>
-                <button onclick="document.getElementById('planModal').classList.remove('active')" class="btn-danger">Close</button>
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h2>24-Month Future Plan</h2>
+                <button onclick="document.getElementById('planModal').classList.remove('active')" class="btn-danger" style="padding:8px 16px;">Close</button>
             </div>
             <div style="overflow-x: auto;">
-                <table class="plan-table" id="planTable">
+                <table class="plan-table">
                     <thead><tr id="planTableHeader"></tr></thead>
                     <tbody id="planTableBody"></tbody>
                 </table>
@@ -177,25 +173,19 @@
     </div>
 
     <script>
-        let data = {
-            salary: 10000,
-            startDate: new Date().toISOString().split('T')[0],
-            envelopes: []
-        };
+        let data = { salary: 10000, startDate: new Date().toISOString().split('T')[0], envelopes: [] };
         let editingId = null;
 
         function loadData() {
-            const stored = localStorage.getItem('salaryEnvelopePlan_v2');
-            if (stored) {
-                data = JSON.parse(stored);
-            }
+            const stored = localStorage.getItem('salaryEnvelopePlanner_v3');
+            if (stored) data = JSON.parse(stored);
             document.getElementById('salary').value = data.salary;
             document.getElementById('startDate').value = data.startDate || new Date().toISOString().split('T')[0];
             render();
         }
 
         function saveData() {
-            localStorage.setItem('salaryEnvelopePlan_v2', JSON.stringify(data));
+            localStorage.setItem('salaryEnvelopePlanner_v3', JSON.stringify(data));
             render();
         }
 
@@ -208,7 +198,11 @@
         function showAddModal() {
             editingId = null;
             document.getElementById('modalTitle').textContent = 'Add Envelope';
-            document.getElementById('envelopeForm').reset();
+            document.getElementById('envName').value = '';
+            document.getElementById('envType').value = 'goal';
+            document.getElementById('envTarget').value = '';
+            document.getElementById('envCurrent').value = '0';
+            document.getElementById('envMonthly').value = '';
             document.getElementById('envelopeModal').classList.add('active');
         }
 
@@ -224,29 +218,24 @@
             document.getElementById('envelopeModal').classList.add('active');
         }
 
-        function closeModal() {
-            document.getElementById('envelopeModal').classList.remove('active');
-        }
+        function closeModal() { document.getElementById('envelopeModal').classList.remove('active'); }
 
         function saveEnvelope(e) {
             e.preventDefault();
-            const envelope = {
+            const env = {
                 id: editingId || Date.now(),
                 name: document.getElementById('envName').value,
                 type: document.getElementById('envType').value,
                 target: parseFloat(document.getElementById('envTarget').value) || 0,
                 current: parseFloat(document.getElementById('envCurrent').value) || 0,
-                monthly: parseFloat(document.getElementById('envMonthly').value) || 0,
-                completed: false
+                monthly: parseFloat(document.getElementById('envMonthly').value) || 0
             };
-
             if (editingId) {
-                const index = data.envelopes.findIndex(e => e.id === editingId);
-                data.envelopes[index] = envelope;
+                const idx = data.envelopes.findIndex(i => i.id === editingId);
+                data.envelopes[idx] = env;
             } else {
-                data.envelopes.push(envelope);
+                data.envelopes.push(env);
             }
-
             saveData();
             closeModal();
         }
@@ -258,17 +247,11 @@
             }
         }
 
-        function updateCurrentAmount(id) {
-            const input = document.getElementById(`updateInput-${id}`);
-            const updateVal = parseFloat(input.value) || 0;
+        function updateEnvelopeAmount(id) {
+            const amount = parseFloat(document.getElementById(`updateInput-${id}`).value) || 0;
             const env = data.envelopes.find(e => e.id === id);
-            
-            // This is "update for this time" logic - we add it to the total current
-            env.current += updateVal;
-            if (env.type !== 'budget' && env.current >= env.target) {
-                env.current = env.target;
-                env.completed = true;
-            }
+            env.current += amount;
+            if (env.type !== 'budget' && env.current > env.target) env.current = env.target;
             saveData();
         }
 
@@ -277,7 +260,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `salary-planner-${new Date().toISOString().split('T')[0]}.json`;
+            a.download = `salary-plan-export.json`;
             a.click();
         }
 
@@ -289,34 +272,29 @@
                 try {
                     data = JSON.parse(event.target.result);
                     saveData();
-                    location.reload();
-                } catch (err) {
-                    alert('Invalid JSON file');
-                }
+                } catch(err) { alert('Invalid file'); }
             };
             reader.readAsText(file);
         }
 
-        function calculateMetrics() {
-            data.envelopes.forEach(env => {
-                if (env.type === 'budget') {
-                    env.remaining = 0;
-                    env.monthsLeft = 0;
-                } else {
-                    env.remaining = Math.max(0, env.target - env.current);
-                    env.monthsLeft = env.monthly > 0 ? Math.ceil(env.remaining / env.monthly) : Infinity;
-                }
-            });
-        }
-
         function render() {
-            calculateMetrics();
-            
-            // Render Cards
             const list = document.getElementById('envelopesList');
-            list.innerHTML = '';
+            const summaryBody = document.getElementById('summaryBody');
+            list.innerHTML = ''; summaryBody.innerHTML = '';
+            
+            let totals = { target: 0, current: 0, allocation: 0, remaining: 0 };
+            
             data.envelopes.forEach(env => {
+                const remaining = Math.max(0, env.target - env.current);
+                const months = env.monthly > 0 ? Math.ceil(remaining / env.monthly) : '∞';
                 const progress = env.type === 'budget' ? 100 : Math.min(100, (env.current / env.target) * 100);
+                
+                totals.target += env.target;
+                totals.current += env.current;
+                totals.allocation += env.monthly;
+                totals.remaining += remaining;
+
+                // Card
                 const card = document.createElement('div');
                 card.className = `envelope ${env.type}`;
                 card.innerHTML = `
@@ -325,44 +303,33 @@
                             <div class="envelope-type">${env.type}</div>
                             <div class="envelope-title">${env.name}</div>
                         </div>
-                        <div class="action-btns">
-                            <button onclick="showEditModal(${env.id})" style="padding:4px 8px; font-size:12px;">Edit</button>
-                            <button onclick="deleteEnvelope(${env.id})" class="btn-danger" style="padding:4px 8px; font-size:12px;">X</button>
+                        <div style="display:flex; gap:4px;">
+                            <button onclick="showEditModal(${env.id})" style="padding:4px 8px; font-size:10px;">Edit</button>
+                            <button onclick="deleteEnvelope(${env.id})" class="btn-danger" style="padding:4px 8px; font-size:10px;">X</button>
                         </div>
                     </div>
                     <div class="envelope-amount">${env.current.toLocaleString()} / ${env.target.toLocaleString()}</div>
                     <div class="progress-bar"><div class="progress-fill" style="width: ${progress}%"></div></div>
                     <div class="envelope-update-area">
-                        <div style="font-size:12px; color:#718096; margin-bottom:4px;">Allocation: ${env.monthly.toLocaleString()}</div>
+                        <div style="font-size:11px; color:#718096; margin-bottom:4px;">Standard Allocation: ${env.monthly.toLocaleString()}</div>
                         <div class="update-input-group">
-                            <input type="number" id="updateInput-${env.id}" value="${env.monthly}" placeholder="Amount">
-                            <button onclick="updateCurrentAmount(${env.id})" style="padding:8px 12px; font-size:12px;">Update</button>
+                            <input type="number" id="updateInput-${env.id}" value="${env.monthly}">
+                            <button onclick="updateEnvelopeAmount(${env.id})" style="padding:8px 12px; font-size:11px;">Add Update</button>
                         </div>
                     </div>
                 `;
                 list.appendChild(card);
-            });
 
-            // Render Summary Table
-            const body = document.getElementById('summaryBody');
-            body.innerHTML = '';
-            let totals = { target: 0, current: 0, allocation: 0, remaining: 0 };
-            
-            data.envelopes.forEach(env => {
-                totals.target += env.target;
-                totals.current += env.current;
-                totals.allocation += env.monthly;
-                totals.remaining += env.remaining;
-
-                body.innerHTML += `
+                // Summary Row
+                summaryBody.innerHTML += `
                     <tr>
                         <td>${env.name}</td>
                         <td><span class="badge badge-${env.type}">${env.type}</span></td>
                         <td>${env.target.toLocaleString()}</td>
                         <td>${env.current.toLocaleString()}</td>
                         <td>${env.monthly.toLocaleString()}</td>
-                        <td>${env.remaining.toLocaleString()}</td>
-                        <td>${env.monthsLeft === Infinity ? '∞' : env.monthsLeft}</td>
+                        <td>${remaining.toLocaleString()}</td>
+                        <td>${months}</td>
                     </tr>
                 `;
             });
@@ -378,57 +345,38 @@
         }
 
         function showPlanTable() {
-            const modal = document.getElementById('planModal');
             const header = document.getElementById('planTableHeader');
             const body = document.getElementById('planTableBody');
-            
             header.innerHTML = '<th>Month</th>';
-            data.envelopes.forEach(env => header.innerHTML += `<th>${env.name}</th>`);
-            header.innerHTML += '<th>Remaining Salary</th>';
-
-            body.innerHTML = '';
+            data.envelopes.forEach(e => header.innerHTML += `<th>${e.name}</th>`);
+            header.innerHTML += '<th>Rem. Salary</th>';
             
-            let simEnvelopes = data.envelopes.map(e => ({...e, simCurrent: e.current}));
-            let simStartDate = new Date(data.startDate);
+            body.innerHTML = '';
+            let simEnvs = data.envelopes.map(e => ({...e, simCur: e.current}));
+            let simStart = new Date(data.startDate);
 
-            for (let m = 0; m < 24; m++) {
-                let monthDate = new Date(simStartDate);
-                monthDate.setMonth(monthDate.getMonth() + m);
-                let row = `<td>${monthDate.toLocaleDateString('en-US', {month: 'short', year: 'numeric'})}</td>`;
+            for (let i = 0; i < 24; i++) {
+                let d = new Date(simStart); d.setMonth(d.getMonth() + i);
+                let row = `<td>${d.toLocaleDateString('en-US', {month:'short', year:'numeric'})}</td>`;
+                let remSal = data.salary;
                 
-                let monthlyRemaining = data.salary;
-                let activeAllocations = 0;
-
-                simEnvelopes.forEach(env => {
-                    let allocation = 0;
-                    if (env.type === 'budget') {
-                        allocation = env.monthly;
-                    } else if (env.simCurrent < env.target) {
-                        allocation = Math.min(env.monthly, env.target - env.simCurrent);
-                        env.simCurrent += allocation;
+                simEnvs.forEach(env => {
+                    let alloc = 0;
+                    if (env.type === 'budget') alloc = env.monthly;
+                    else if (env.simCur < env.target) {
+                        alloc = Math.min(env.monthly, env.target - env.simCur);
+                        env.simCur += alloc;
                     }
-                    
-                    monthlyRemaining -= allocation;
-                    row += `<td style="${env.simCurrent >= env.target && env.type !== 'budget' ? 'color:#48bb78; font-weight:bold;' : ''}">${env.simCurrent.toLocaleString()}</td>`;
+                    remSal -= alloc;
+                    row += `<td style="${env.simCur >= env.target && env.type !== 'budget' ? 'background:#c6f6d5' : ''}">${env.simCur.toLocaleString()}</td>`;
                 });
-
-                row += `<td style="font-weight:bold; color:${monthlyRemaining >= 0 ? '#48bb78' : '#f56565'}">${monthlyRemaining.toLocaleString()}</td>`;
+                row += `<td style="font-weight:bold; color:${remSal >= 0 ? '#48bb78' : '#f56565'}">${remSal.toLocaleString()}</td>`;
                 body.innerHTML += `<tr>${row}</tr>`;
-
-                // Stop if all non-budgets are done
-                if (simEnvelopes.every(e => e.type === 'budget' || e.simCurrent >= e.target)) {
-                    if (m > 0) break; // Ensure at least 1 month shows
-                }
             }
-
-            modal.classList.add('active');
+            document.getElementById('planModal').classList.add('active');
         }
 
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').catch(() => {});
-        }
-
-        window.addEventListener('load', loadData);
+        window.onload = loadData;
     </script>
 </body>
 </html>
