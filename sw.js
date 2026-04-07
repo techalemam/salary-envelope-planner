@@ -1,4 +1,4 @@
-const CACHE_NAME = 'salary-planner-v1';
+const CACHE_NAME = 'salary-planner-v2';
 const urlsToCache = [
   '/salary-envelope-planner/',
   '/salary-envelope-planner/index.html',
