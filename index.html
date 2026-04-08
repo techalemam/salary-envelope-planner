@@ -700,14 +700,13 @@ modal_add: "إنشاء ظرف جديد", modal_update: "تحديث بيانات 
                 target: parseFloat(document.getElementById('mTarget').value) || 0,
                 dueDate: document.getElementById('mDue').value,
                 current: parseFloat(document.getElementById('mCurrent').value) || 0,
-                monthly: parseFloat(document.getElementById('mMonthly').value) || 0
+                monthly: parseFloat(document.getElementById('mMonthly').value) || 0,
+            createdAt: editId ? (d.envelopes.find(i => i.id === editId).createdAt || new Date().toISOString()) : new Date().toISOString(),
+            history: editId ? (d.envelopes.find(i => i.id === editId).history || []) : [{type: 'created', date: new Date().toISOString(), amount: parseFloat(document.getElementById('mCurrent').value) || 0}]
             };
             const d = isWhatIf ? sandboxData : realData;
             if(editId) {
                 const idx = d.envelopes.findIndex(i => i.id === editId),
-                            createdAt: editId ? (d.envelopes.find(i => i.id === editId).createdAt || new Date().toISOString()) : new Date().toISOString(),
-                            history: editId ? (d.envelopes.find(i => i.id === editId).history || []) : [{type: 'created', date: new Date().toISOString(), amount: parseFloat(document.getElementById('mCurrent').value) || 0}]
-                d.envelopes[idx] = e;
             } else {
                 d.envelopes.push(e);
             }
