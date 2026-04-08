@@ -558,7 +558,7 @@ modal_add: "إنشاء ظرف جديد", modal_update: "تحديث بيانات 
                     <td class="num num-cell">${(e.target || 0).toLocaleString()}</td>
                     <td class="num num-cell">${e.current.toLocaleString()}</td>
                     <td class="num num-cell">${e.monthly.toLocaleString()}</td>
-                    <td class="num num-cell">${months}</td><td>${e.dueDate || '-'}</td><<td class="num num-cell" style="color:${rem===0?'var(--success)':'inherit'}">${e.type==='budget'?'-':rem.toLocaleString()}</td>/tr>`;
+                    <td class="num num-cell">${months}</td><td>${e.dueDate || '-'}</td><td class="num num-cell" style="color:${rem===0?'var(--success)':'inherit'}">${e.type==='budget'?'-':rem.toLocaleString()}</td></tr>`;
             });
             h += `</tbody></table>`;
             document.getElementById('summaryTableContainer').innerHTML = h;
