@@ -446,7 +446,7 @@
                 lbl_total_monthly: "Total Monthly",
                 cat_budget: "Daily Expenses", cat_debt: "Debt Payoff", cat_goal: "Savings Goals",
                 lbl_months_due: "months left", lbl_suggested: "Suggested:", warn_short: "Deposit is too low",
-                lbl_mon_ded: "Deposit", lbl_permanent: "Permanent", lbl_mon_left: "months left",
+                lbl_mon_ded: "Deposit", lbl_permanent: "Permanent", lbl_mon_left: "months left", lbl_remaining: "Remaining", col_remaining: "Remaining",
                 quick_dep: "Quick Deposit", btn_update: "Add", btn_edit: "Edit", btn_save: "Save", btn_cancel: "Cancel", btn_reset: "Reset All",
                 confirm_del: "Are you sure you want to delete this envelope?",
                 confirm_reset: "RESET ALL DATA? This cannot be undone.",
@@ -469,7 +469,7 @@
                 lbl_total_monthly: "إجمالي الاستقطاع",
                 cat_budget: "أظرف المصاريف التشغيلية", cat_debt: "أظرف سداد الديون", cat_goal: "أظرف الأهداف والادخار",
                 lbl_months_due: "أشهر متبقية", lbl_suggested: "المقترح:", warn_short: "المبلغ أقل من المطلوب",
-                lbl_mon_ded: "الاستقطاع", lbl_permanent: "دائم", lbl_mon_left: "شهور متبقية",
+                lbl_mon_ded: "الاستقطاع", lbl_permanent: "دائم", lbl_mon_left: "شهور متبقية", lbl_remaining: "المتبقي", col_remaining: "المتبقي",
                 quick_dep: "إيداع سريع", btn_update: "إضافة", btn_edit: "تعديل", btn_save: "حفظ", btn_cancel: "إلغاء", btn_reset: "إعادة ضبط",
                 confirm_del: "هل أنت متأكد من حذف هذا الظرف؟",
                 confirm_reset: "هل تريد مسح جميع البيانات؟ لا يمكن التراجع.",
@@ -534,6 +534,10 @@ modal_add: "إنشاء ظرف جديد", modal_update: "تحديث بيانات 
                         ${unalloc.toLocaleString()} <span style="font-size:13px;color:var(--text-muted);font-weight:600;">(${Math.round((d.salary-unalloc)/d.salary*100)||0}% ${i18next.t('alloc_pct')})</span>
                     </div>
                 </div>
+            <div class="stat-card" style="border-color: var(--warning);">
+                <div class="stat-label">${i18next.t('lbl_remaining')}</div>
+                <div class="stat-val num">${(ts.tar - ts.cur).toLocaleString()}</div>
+            </div>
             `;
 
             renderTable(d);
@@ -546,7 +550,7 @@ modal_add: "إنشاء ظرف جديد", modal_update: "تحديث بيانات 
                 <th>${i18next.t('col_name')}</th><th>${i18next.t('col_type')}</th>
                 <th>${i18next.t('col_target')}</th><th>${i18next.t('col_current')}</th>
                 <th>${i18next.t('col_alloc')}</th><th>${i18next.t('col_months')}</th>
-                <th>${i18next.t('col_due')}</th></tr></thead><tbody>`;
+                <th>${i18next.t('col_due')}</th><<th>${i18next.t('col_remaining')}</th>/tr></thead><tbody>`;
             d.envelopes.forEach(e => {
                 const rem = Math.max(0, (e.target || 0) - e.current);
                 const months = e.monthly > 0 ? Math.ceil(rem / e.monthly) : (e.type === 'budget' ? '-' : '∞');
@@ -554,7 +558,7 @@ modal_add: "إنشاء ظرف جديد", modal_update: "تحديث بيانات 
                     <td class="num num-cell">${(e.target || 0).toLocaleString()}</td>
                     <td class="num num-cell">${e.current.toLocaleString()}</td>
                     <td class="num num-cell">${e.monthly.toLocaleString()}</td>
-                    <td class="num num-cell">${months}</td><td>${e.dueDate || '-'}</td></tr>`;
+                    <td class="num num-cell">${months}</td><td>${e.dueDate || '-'}</td><<td class="num num-cell" style="color:${rem===0?'var(--success)':'inherit'}">${e.type==='budget'?'-':rem.toLocaleString()}</td>/tr>`;
             });
             h += `</tbody></table>`;
             document.getElementById('summaryTableContainer').innerHTML = h;
@@ -618,6 +622,7 @@ modal_add: "إنشاء ظرف جديد", modal_update: "تحديث بيانات 
                                 <span>${i18next.t('lbl_mon_ded')}: ${e.monthly.toLocaleString()}</span>
                                 <span>${e.type==='budget' ? i18next.t('lbl_permanent') : Math.ceil(rem/e.monthly) + ' ' + i18next.t('lbl_mon_left')}</span>
                             </div>
+     ${e.type !== 'budget' ? `<div style="margin-top:10px; padding:10px 12px; background:#f8fafc; border-radius:10px; border:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center;"><span style="font-size:12px; font-weight:700; color:var(--text-muted);">${i18next.t('lbl_remaining')}</span><span style="font-size:18px; font-weight:800; color:${rem===0?'var(--success)':'var(--primary)'}">${rem.toLocaleString()}</span></div>` : ''}
                             ${suggestInfo}
                             <div class="update-bar" style="margin-top:20px; padding-top:15px; border-top:1px solid #f1f5f9; display:flex; gap:10px; align-items:center;">
                                 <span style="font-size: 12px; font-weight: 700;">${i18next.t('quick_dep')}:</span>
