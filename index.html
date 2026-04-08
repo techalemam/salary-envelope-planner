@@ -550,7 +550,7 @@ modal_add: "إنشاء ظرف جديد", modal_update: "تحديث بيانات 
                 <th>${i18next.t('col_name')}</th><th>${i18next.t('col_type')}</th>
                 <th>${i18next.t('col_target')}</th><th>${i18next.t('col_current')}</th>
                 <th>${i18next.t('col_alloc')}</th><th>${i18next.t('col_months')}</th>
-                <th>${i18next.t('col_due')}</th><<th>${i18next.t('col_remaining')}</th>/tr></thead><tbody>`;
+                            <th>${i18next.t('col_due')}</th><th>${i18next.t('col_remaining')}</th></tr></thead><tbody>`;
             d.envelopes.forEach(e => {
                 const rem = Math.max(0, (e.target || 0) - e.current);
                 const months = e.monthly > 0 ? Math.ceil(rem / e.monthly) : (e.type === 'budget' ? '-' : '∞');
