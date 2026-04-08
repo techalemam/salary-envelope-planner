@@ -705,7 +705,14 @@ modal_add: "إنشاء ظرف جديد", modal_update: "تحديث بيانات 
             history: editId ? (d.envelopes.find(i => i.id === editId).history || []) : [{type: 'created', date: new Date().toISOString(), amount: parseFloat(document.getElementById('mCurrent').value) || 0}]
             };
             const d = isWhatIf ? sandboxData : realData;
-            if(editId) {
+        if(editId) {
+            const idx = d.envelopes.findIndex(i => i.id === editId);
+            d.envelopes[idx] = e;
+        } else {
+            d.envelopes.push(e);
+        }
+            707
+            
                 const idx = d.envelopes.findIndex(i => i.id === editId),
             } else {
                 d.envelopes.push(e);
