@@ -460,7 +460,8 @@ function renderCards        </main>
                 confirm_del: "Are you sure you want to delete this envelope?",
                 confirm_reset: "RESET ALL DATA? This cannot be undone.",
             sec_timeline: "Financial Freedom Timeline", sec_config: "Configuration", lbl_monthly_salary: "Monthly Salary", lbl_start_date: "Plan Start Date",
-                            btn_history: "History", lbl_transaction_history: "Transaction History", lbl_created_on: "Created on", lbl_initial_value: "Initial value", lbl_deposit_on: "Deposit on", lbl_amount: "Amount", lbl_no_history: "No transaction history yet",
+                            488
+                                : "History", lbl_transaction_history: "Transaction History", lbl_created_on: "Created on", lbl_initial_value: "Initial value", lbl_deposit_on: "Deposit on", lbl_amount: "Amount", lbl_no_history: "No transaction history yet",
                 modal_add: "Create New Envelope", modal_update: "Update Envelope", export: "Export", import: "Import", warning_overAllocated: "Total monthly allocations exceed salary", empty_state: "No envelopes yet", empty_state_hint: "Click + Add Envelope to get started", alloc_pct: "Allocated"
             }},
             ar: { translation: {
@@ -488,8 +489,7 @@ modal_add: "إنشاء ظرف جديد", modal_update: "تحديث بيانات 
                 
             }}
         };
-
-        i18next.init({ lng: 'ar', resources }).then(() => { updateContent(); load(); });
+                modal_add: "إنشاء ظرف جديد", modal_update: "تحديث بيانات الظرف", export: "تصدير", import: "استيراد", warning_overAllocated: "الاستقطاعات الشهرية تجاوزت الراتب", empty_state: "لا توجد أظرف بعد", empty_state_hint: "اضغط + إضافة ظرف جديد للبدء", alloc_pct: "مخصص", btn_history: "السجل", lbl_transaction_history: "سجل العمليات", lbl_created_on: "تم الإنشاء في", lbl_initial_value: "القيمة الابتدائية", lbl_deposit_on: "إيداع في", lbl_amount: "المبلغ", lbl_no_history: "لا يوجد سجل بعد"        i18next.init({ lng: 'ar', resources }).then(() => { updateContent(); load(); });
 
         function toggleLang() {
             i18next.changeLanguage(i18next.language === 'ar' ? 'en' : 'ar').then(() => {
@@ -623,7 +623,8 @@ modal_add: "إنشاء ظرف جديد", modal_update: "تحديث بيانات 
                                     <button class="btn btn-danger" style="padding:6px 12px;" onclick="delEnv(${e.id})">✕</button>
                                 </div>
                             </div>
-                            <button class="btn btn-outline" style="padding:6px 12px;" onclick="showHistory(${e.id})">${i18next.t('btn_history')}</button>
+                            <button class="btn btn-outline" style="padding:6px 12px;" onclick="showHistory(${e.id})">${i18next.t('487
+                                                                                                                                 ')}</button>
                         <div class="num" style="font-size: 24px; font-weight:800; margin-top:20px;">
                                 ${e.current.toLocaleString()} <span style="font-size:14px; color:var(--text-muted); font-weight:500;">/ ${(e.target || 0).toLocaleString()}</span>
                             </div>
@@ -711,7 +712,8 @@ modal_add: "إنشاء ظرف جديد", modal_update: "تحديث بيانات 
         } else {
             d.envelopes.push(e);
         }
-            707
+            713
+            
             
                 const idx = d.envelopes.findIndex(i => i.id === editId),
             } else {
