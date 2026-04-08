@@ -309,6 +309,57 @@
     /* Timeline grid fix */
     #ganttChart > div { grid-template-columns: 90px 1fr !important; }
 }
+
+                /* === RESPONSIVE DESIGN === */
+        /* Tablet: 768px and below */
+        @media (max-width: 768px) {
+            .container { padding: 12px; padding-bottom: 70px; }
+            header { padding: 12px 10px; }
+            header h1 { font-size: 16px; }
+            header p { font-size: 11px; }
+            .btn-header { font-size: 10px; padding: 6px 12px; }
+            .summary-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+            .stat-card { padding: 10px; }
+            .stat-label { font-size: 10px; }
+            .stat-val { font-size: 16px; }
+            .tabs { gap: 3px; padding: 3px; }
+            .tab { font-size: 11px; padding: 7px 10px; }
+            .env-card { padding: 14px; }
+            .env-card .num { font-size: 18px; }
+            .section-heading { font-size: 14px; }
+            .card-box { padding: 10px; }
+            .btn { font-size: 12px; padding: 7px 12px; }
+            .modal-body { padding: 16px; }
+        }
+
+        /* Mobile: 480px and below */
+        @media (max-width: 480px) {
+            .container { padding: 8px; padding-bottom: 60px; }
+            header { padding: 10px 8px; flex-direction: column; gap: 10px; text-align: center; }
+            header h1 { font-size: 14px; }
+            header p { font-size: 10px; }
+            .btn-header { font-size: 9px; padding: 5px 10px; }
+            .summary-grid { grid-template-columns: 1fr; gap: 6px; }
+            .stat-card { padding: 8px; }
+            .stat-label { font-size: 9px; }
+            .stat-val { font-size: 14px; margin-top: 4px; }
+            .tabs { gap: 2px; padding: 2px; flex-wrap: wrap; }
+            .tab { font-size: 10px; padding: 6px 8px; flex: 1; min-width: 80px; }
+            .env-card { padding: 12px; margin-bottom: 10px; }
+            .env-card .num { font-size: 16px; }
+            .env-card h3 { font-size: 15px; }
+            .section-heading { font-size: 13px; }
+            .card-box { padding: 8px; }
+            .btn { font-size: 11px; padding: 6px 10px; }
+            .modal-body { padding: 12px; max-height: 70vh; }
+            .table-wrap table { min-width: 350px; font-size: 11px; }
+            .table-wrap th, .table-wrap td { padding: 6px 4px; }
+            .inp-sm { width: 60px; }
+            .update-bar { flex-wrap: wrap; padding: 8px; }
+            .update-bar button { font-size: 10px; padding: 6px 10px; }
+            #ganttChart > div { grid-template-columns: 80px 1fr !important; }
+        }
+    
     </style>
 </head>
 <body id="bodyRoot">
