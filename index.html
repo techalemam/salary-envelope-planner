@@ -254,7 +254,61 @@
         .pane { display: none; }
         .pane.active { display: block; }
         .table-wrap table { min-width: 600px; }
-        @media (max-width: 768px) { .summary-grid { position: static; } header { flex-direction: column; gap: 16px; text-align: center; } .card-box { padding: 18px; } }
+        /* ============================================
+   RESPONSIVE DESIGN - TABLET & MOBILE
+   ============================================ */
+
+/* Tablet: 768px and below */
+@media (max-width: 768px) {
+    .container { padding: 12px; padding-bottom: 60px; }
+    header { flex-direction: column; gap: 16px; padding: 24px 16px; text-align: center; }
+    header h1 { font-size: 22px; }
+    header > div:last-child { flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; }
+    .btn-header { font-size: 12px; padding: 8px 12px; flex: 1; min-width: 80px; }
+    .summary-grid { position: static; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+    .stat-card { padding: 16px; }
+    .stat-val { font-size: 22px; }
+    .tabs { width: 100%; justify-content: stretch; }
+    .tab { flex: 1; font-size: 13px; padding: 10px 8px; text-align: center; }
+    .card-box { padding: 16px; }
+    .section-heading { font-size: 17px; }
+    .env-grid { grid-template-columns: 1fr; gap: 16px; }
+    .env-card { padding: 20px; }
+    .modal-body { padding: 24px; border-radius: 16px; }
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .table-wrap table { min-width: 500px; font-size: 13px; }
+    .inp-sm { width: 70px; }
+}
+
+/* Mobile: 480px and below */
+@media (max-width: 480px) {
+    .container { padding: 8px; padding-bottom: 50px; }
+    header { padding: 18px 12px; border-radius: 12px; }
+    header h1 { font-size: 18px; }
+    header p { font-size: 12px; }
+    .btn-header { font-size: 11px; padding: 7px 10px; }
+    .summary-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .stat-card { padding: 12px; border-radius: 12px; }
+    .stat-label { font-size: 11px; }
+    .stat-val { font-size: 18px; margin-top: 6px; }
+    .tabs { gap: 4px; padding: 4px; border-radius: 12px; }
+    .tab { font-size: 12px; padding: 8px 6px; border-radius: 8px; }
+    .env-card { padding: 16px; border-radius: 14px; }
+    .env-card .num { font-size: 20px; }
+    .section-heading { font-size: 15px; }
+    .card-box { padding: 12px; border-radius: 14px; }
+    .btn { font-size: 13px; padding: 8px 14px; }
+    .modal-body { padding: 18px; border-radius: 14px; }
+    .table-wrap table { min-width: 460px; font-size: 12px; }
+    .table-wrap th, .table-wrap td { padding: 8px 6px; }
+    /* Stack card header on mobile */
+    .env-card [style*="display:flex; justify-content:space-between"] { flex-direction: column; gap: 10px; }
+    /* Quick deposit bar stacks */
+    .update-bar { flex-wrap: wrap; }
+    .inp-sm { flex: 1; min-width: 60px; }
+    /* Timeline grid fix */
+    #ganttChart > div { grid-template-columns: 90px 1fr !important; }
+}
     </style>
 </head>
 <body id="bodyRoot">
