@@ -429,6 +429,8 @@ function renderCards        </main>
     </div>
 
     <!-- Modal -->
+                                    <!-- Load Demo Data Button -->
+                                    <button class="btn" onclick="loadDemoData()" style="background:var(--warning); color:white; margin-top:15px; width:100%;" data-i18n="load_demo">🔄 Load Clean Demo Data</button>
     <div id="envModal" class="modal">
         <form class="modal-body" onsubmit="saveEnv(event)">
             <h2 id="modalTitle" style="margin-bottom:25px;">Add Envelope</h2>
@@ -512,6 +514,8 @@ function renderCards        </main>
                 confirm_reset: "RESET ALL DATA? This cannot be undone.",
             sec_timeline: "Financial Freedom Timeline", sec_config: "Configuration", lbl_monthly_salary: "Monthly Salary", lbl_start_date: "Plan Start Date",
                             488
+                                                    load_demo: "🔄 Load Clean Demo Data",
+                                    confirm_load_demo: "Load demo data? This will replace current data.",
                                 : "History", lbl_transaction_history: "Transaction History", lbl_created_on: "Created on", lbl_initial_value: "Initial value", lbl_deposit_on: "Deposit on", lbl_amount: "Amount", lbl_no_history: "No transaction history yet",
                 modal_add: "Create New Envelope", modal_update: "Update Envelope", export: "Export", import: "Import", warning_overAllocated: "Total monthly allocations exceed salary", empty_state: "No envelopes yet", empty_state_hint: "Click + Add Envelope to get started", alloc_pct: "Allocated"
             }},
@@ -537,6 +541,8 @@ function renderCards        </main>
                 confirm_reset: "هل تريد مسح جميع البيانات؟ لا يمكن التراجع.",
                             sec_timeline: "الجدول الزمني للحرية المالية", sec_config: "الإعدادات", lbl_monthly_salary: "الراتب الشهري", lbl_start_date: "تاريخ بدء الخطة",
 modal_add: "إنشاء ظرف جديد", modal_update: "تحديث بيانات الظرف", export: "تصدير", import: "استيراد", warning_overAllocated: "الاستقطاعات الشهرية تجاوزت الراتب", empty_state: "لا توجد أظرف بعد", empty_state_hint: "اضغط + إضافة ظرف جديد للبدء", alloc_pct: "مخصص"
+                                    load_demo: "🔄 تحميل بيانات تجريبية نظيفة",
+                        confirm_load_demo: "هل تريد تحميل البيانات التجريبية؟ سيتم استبدال البيانات الحالية.",
                 
             }}
         };
@@ -887,6 +893,30 @@ modal_add: "إنشاء ظرف جديد", modal_update: "تحديث بيانات 
                 document.getElementById('historyContent').innerHTML = html;
                 document.getElementById('historyModal').classList.add('active');
             }
+
+                // Load Clean Demo Data Function
+                function loadDemoData() {
+                                if (!confirm(i18next.t('confirm_load_demo') || 'هل تريد تحميل البيانات التجريبية؟ سيتم استبدال البيانات الحالية.')) {
+                                                    return;
+                                                }
+
+                                const demoData = {
+                                                    salary: 17000,
+                                                    envelopes: [
+                                                                            {id: 1, name: 'Land', target: 75000, saved: 41250, monthly: 3000, type: 'goal'},
+                                                                            {id: 2, name: 'Home Rent', target: 28000, saved: 14000, monthly: 2500, type: 'expense'},
+                                                                            {id: 3, name: 'Gov Fees', target: 19200, saved: 9600, monthly: 1600, type: 'expense'},
+                                                                            {id: 4, name: 'Hajj', target: 30000, saved: 25000, monthly: 1000, type: 'goal'},
+                                                                            {id: 5, name: 'Wife', target: 30000, saved: 6000, monthly: 1000, type: 'expense'},
+                                                                            {id: 6, name: 'Car', target: 50000, saved: 6500, monthly: 2500, type: 'goal'},
+                                                                            {id: 7, name: 'Side Hustle', target: 25000, saved: 5000, monthly: 1000, type: 'goal'},
+                                                                            {id: 8, name: 'Home expenses', target: 40000, saved: 2500, monthly: 2500, type: 'expense'}
+                                                                        ]
+                                                                    };
+
+                                localStorage.setItem('financeData', JSON.stringify(demoData));
+                                location.reload();
+                            }
     </script>
 </body>
 </html>
