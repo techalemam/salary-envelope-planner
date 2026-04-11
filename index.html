@@ -513,10 +513,8 @@ function renderCards        </main>
                 confirm_del: "Are you sure you want to delete this envelope?",
                 confirm_reset: "RESET ALL DATA? This cannot be undone.",
             sec_timeline: "Financial Freedom Timeline", sec_config: "Configuration", lbl_monthly_salary: "Monthly Salary", lbl_start_date: "Plan Start Date",
-                            488
-                                                    load_demo: "🔄 Load Clean Demo Data",
                                     confirm_load_demo: "Load demo data? This will replace current data.",
-                                : "History", lbl_transaction_history: "Transaction History", lbl_created_on: "Created on", lbl_initial_value: "Initial value", lbl_deposit_on: "Deposit on", lbl_amount: "Amount", lbl_no_history: "No transaction history yet",
+                                btn_history: "History", lbl_transaction_history: "Transaction History", lbl_created_on: "Created on", lbl_initial_value: "Initial value", lbl_deposit_on: "Deposit on", lbl_amount: "Amount", lbl_no_history: "No transaction history yet",
                 modal_add: "Create New Envelope", modal_update: "Update Envelope", export: "Export", import: "Import", warning_overAllocated: "Total monthly allocations exceed salary", empty_state: "No envelopes yet", empty_state_hint: "Click + Add Envelope to get started", alloc_pct: "Allocated"
             }},
             ar: { translation: {
@@ -769,12 +767,6 @@ modal_add: "إنشاء ظرف جديد", modal_update: "تحديث بيانات 
         } else {
             d.envelopes.push(e);
         }
-            713
-            
-            
-            } else {
-                d.envelopes.push(e);
-            }
             if(!isWhatIf) localStorage.setItem('salary_planner_v7', JSON.stringify(realData));
             closeModal();
             render();
@@ -903,18 +895,18 @@ modal_add: "إنشاء ظرف جديد", modal_update: "تحديث بيانات 
                                 const demoData = {
                                                     salary: 17000,
                                                     envelopes: [
-                                                                            {id: 1, name: 'Land', target: 75000, saved: 41250, monthly: 3000, type: 'goal'},
-                                                                            {id: 2, name: 'Home Rent', target: 28000, saved: 14000, monthly: 2500, type: 'expense'},
-                                                                            {id: 3, name: 'Gov Fees', target: 19200, saved: 9600, monthly: 1600, type: 'expense'},
-                                                                            {id: 4, name: 'Hajj', target: 30000, saved: 25000, monthly: 1000, type: 'goal'},
-                                                                            {id: 5, name: 'Wife', target: 30000, saved: 6000, monthly: 1000, type: 'expense'},
-                                                                            {id: 6, name: 'Car', target: 50000, saved: 6500, monthly: 2500, type: 'goal'},
-                                                                            {id: 7, name: 'Side Hustle', target: 25000, saved: 5000, monthly: 1000, type: 'goal'},
-                                                                            {id: 8, name: 'Home expenses', target: 40000, saved: 2500, monthly: 2500, type: 'expense'}
+                                                                            {id: 1, name: 'Land', target: 75000, current: 41250, monthly: 3000, type: 'goal'},
+                                                                            {id: 2, name: 'Home Rent', target: 28000, current: 14000, monthly: 2500, type: 'budget'},
+                                                                            {id: 3, name: 'Gov Fees', target: 19200, current: 9600, monthly: 1600, type: 'budget'},
+                                                                            {id: 4, name: 'Hajj', target: 30000, current: 25000, monthly: 1000, type: 'goal'},
+                                                                            {id: 5, name: 'Wife', target: 30000, current: 6000, monthly: 1000, type: 'budget'},
+                                                                            {id: 6, name: 'Car', target: 50000, current: 6500, monthly: 2500, type: 'goal'},
+                                                                            {id: 7, name: 'Side Hustle', target: 25000, current: 5000, monthly: 1000, type: 'goal'},
+                                                                            {id: 8, name: 'Home expenses', target: 40000, current: 2500, monthly: 2500, type: 'budget'}
                                                                         ]
                                                                     };
 
-                                localStorage.setItem('financeData', JSON.stringify(demoData));
+                                localStorage.setItem('salary_planner_v7', JSON.stringify(demoData));
                                 location.reload();
                             }
     </script>
