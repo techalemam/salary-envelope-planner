@@ -11,6 +11,7 @@ self.addEventListener('install', event => {
       .then(cache => cache.addAll(urlsToCache))
   );
 });
+  self.skipWaiting();
 
 self.addEventListener('fetch', event => {
   event.respondWith(
@@ -31,4 +32,5 @@ self.addEventListener('activate', event => {
       );
     })
   );
+    self.clients.claim();
 });
