@@ -1,4 +1,4 @@
-const CACHE_NAME = 'salary-planner-v7';
+const CACHE_NAME = 'salary-planner-v8';
 const urlsToCache = [
   '/salary-envelope-planner/',
   '/salary-envelope-planner/index.html',
@@ -6,17 +6,22 @@ const urlsToCache = [
 ];
 
 self.addEventListener('install', event => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => cache.addAll(urlsToCache))
   );
 });
-  self.skipWaiting();
 
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
-      .then(response => response || fetch(event.request))
+    fetch(event.request)
+      .then(response => {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
 
@@ -32,5 +37,5 @@ self.addEventListener('activate', event => {
       );
     })
   );
-    self.clients.claim();
+  self.clients.claim();
 });
