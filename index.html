@@ -917,6 +917,18 @@ modal_add: "إنشاء ظرف جديد", modal_update: "تحديث بيانات 
                                 localStorage.setItem('financeData', JSON.stringify(demoData));
                                 location.reload();
                             }
+
+        // Event Listeners
+document.getElementById('addEnvelopeBtn').addEventListener('click', openAddModal);
+document.getElementById('langBtn').addEventListener('click', toggleLang);
+document.getElementById('sandboxBtn').addEventListener('click', toggleWhatIf);
+document.getElementById('exportBtn').addEventListener('click', exportData);
+document.getElementById('importBtn').addEventListener('click', () => document.getElementById('fileInput').click());
+document.getElementById('resetBtn').addEventListener('click', resetAll);
+document.getElementById('demoBtn').addEventListener('click', loadDemoData);
+document.getElementById('envModal').addEventListener('click', (e) => { if(e.target.id === 'envModal') closeModal(); });
+document.getElementById('historyModal').addEventListener('click', (e) => { if(e.target.id === 'historyModal') document.getElementById('historyModal').classList.remove('active'); });
+document.getElementById('envForm').addEventListener('submit', saveEnv);
     </script>
 </body>
 </html>
